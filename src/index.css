@@ -1,0 +1,33 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Lato", sans-serif;
+  margin: 0 !important;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+}
+.ant-typography,
+.ant-btn,
+.ant-card,
+.ant-table,
+.ant-input,
+.ant-select,
+.ant-modal {
+  font-family: "Lato", sans-serif;
+}
+
+/* Ensure other Ant Design components inherit the font */
+.ant-dropdown,
+.ant-popover,
+.ant-list,
+.ant-menu {
+  font-family: "Lato", sans-serif;
+}
