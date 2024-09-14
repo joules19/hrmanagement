@@ -1,6 +1,7 @@
 import React from "react";
 import { Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface JobPosting {
   id: number;
@@ -61,16 +62,16 @@ const columns: TableColumnsType<JobPosting> = [
     render: (_, record) => (
       <div className="flex space-x-2">
         <button
-          className="bg-blue-500 text-white py-1 px-2 rounded"
+          className="text-primary-1 py-1 px-2 rounded"
           onClick={() => console.log("Edit", record)}
         >
-          Edit
+          <PencilSquareIcon className="w-4 h-4" />
         </button>
         <button
-          className="bg-red-500 text-white py-1 px-2 rounded"
+          className="text-red-500 py-1 px-2 rounded"
           onClick={() => console.log("Delete", record.id)}
         >
-          Delete
+          <TrashIcon className="w-4 h-4" />
         </button>
       </div>
     ),

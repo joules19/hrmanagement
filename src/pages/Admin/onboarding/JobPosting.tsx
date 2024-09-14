@@ -68,11 +68,7 @@ const JobPosting: React.FC = () => {
               hoverColor="primary-2"
             />
           </div>
-          <JobPostingTable
-            jobPostings={jobPostings}
-            onEdit={handleShowModal}
-            onDelete={handleDeletePosting}
-          />
+          <JobPostingTable />
           <JobPostingModal
             show={showModal}
             handleClose={handleCloseModal}

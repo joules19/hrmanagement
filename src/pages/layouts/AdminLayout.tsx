@@ -20,16 +20,17 @@ import {
   BoltIcon,
   CalendarIcon,
   ChartBarIcon,
-  ChevronDownIcon,
   CurrencyDollarIcon,
-  FolderIcon,
+  DocumentCurrencyDollarIcon,
   HomeIcon,
-  InboxIcon,
   UserPlusIcon,
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
 import { Link, Outlet } from "react-router-dom";
 
 // Define types for navigation items
@@ -95,11 +96,11 @@ const navigation: NavigationItem[] = [
     icon: CalendarIcon,
     current: false,
     submenu: [
-      { name: "Time Tracking", href: "onboarding/time-tracking" },
-      { name: "Attendance Records", href: "onboarding/attendance-records" },
-      { name: "Leave Management", href: "onboarding/leave-management" },
-      { name: "Overtime Management", href: "onboarding/overtime-management" },
-      { name: "Attendance Reports", href: "onboarding/attendance-reports" },
+      { name: "Time Tracking", href: "attendance/time-tracking" },
+      { name: "Attendance Records", href: "attendance/attendance-records" },
+      { name: "Leave Management", href: "attendance/leave-management" },
+      { name: "Overtime Management", href: "attendance/overtime-management" },
+      { name: "Attendance Reports", href: "attendance/attendance-reports" },
     ],
   },
   {
@@ -122,7 +123,7 @@ const navigation: NavigationItem[] = [
   {
     name: "Benefits Administration",
     href: "#",
-    icon: CurrencyDollarIcon,
+    icon: DocumentCurrencyDollarIcon,
     current: false,
     submenu: [
       {
@@ -261,24 +262,47 @@ export default function Example() {
                     </h1>
                   </div>
                   <div className="mt-5 h-0 flex-1 overflow-y-auto">
-                    <nav className="space-y-1 px-2">
+                    <nav className="flex-1 space-y-1 px-2 pb-4">
                       {navigation.map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-primary-2 text-white"
-                              : "text-primary-3 hover:bg-primary-2",
-                            "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                        <div key={item.name}>
+                          <Link
+                            to={item.href}
+                            onClick={(e) => {
+                              if (item.submenu) {
+                                e.preventDefault();
+                                toggleSubmenu(item.name);
+                              }
+                            }}
+                            className={classNames(
+                              item.current
+                                ? "bg-primary-2 text-white"
+                                : "text-primary-3 hover:bg-primary-2",
+                              "group  flex items-center px-1 py-2 text-sm font-medium rounded-md"
+                            )}
+                          >
+                            <item.icon
+                              className="mr-2  h-6 w-6 flex-shrink-0 text-primary-3"
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                            {item.submenu?.length! > 0 && (
+                              <ChevronDownIcon className="ml-5 w-4 h-4" />
+                            )}
+                          </Link>
+                          {item.submenu && openSubmenus[item.name] && (
+                            <div className="ml-6 mt-1 space-y-1">
+                              {item.submenu.map((subItem) => (
+                                <Link
+                                  key={subItem.name}
+                                  to={subItem.href}
+                                  className="text-primary-3 hover:bg-primary-2 group flex items-center px-2 py-1 text-xs font-medium rounded-md"
+                                >
+                                  {subItem.name}
+                                </Link>
+                              ))}
+                            </div>
                           )}
-                        >
-                          <item.icon
-                            className="mr-4 h-6 w-6 flex-shrink-0 text-primary-300"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
+                        </div>
                       ))}
                     </nav>
                   </div>
@@ -316,16 +340,16 @@ export default function Example() {
                         item.current
                           ? "bg-primary-2 text-white"
                           : "text-primary-3 hover:bg-primary-2",
-                        "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                        "group  flex items-center px-1 py-2 text-sm font-medium rounded-md"
                       )}
                     >
                       <item.icon
-                        className="mr-3 h-6 w-6 flex-shrink-0 text-primary-3"
+                        className="mr-2  h-6 w-6 flex-shrink-0 text-primary-3"
                         aria-hidden="true"
                       />
                       {item.name}
                       {item.submenu?.length! > 0 && (
-                        <ChevronDownIcon className="ml-5 w-3 h-3" />
+                        <ChevronDownIcon className="ml-5 w-4 h-4" />
                       )}
                     </Link>
                     {item.submenu && openSubmenus[item.name] && (
@@ -334,9 +358,9 @@ export default function Example() {
                           <Link
                             key={subItem.name}
                             to={subItem.href}
-                            className="text-primary-3 hover:bg-primary-2 group flex items-center px-2 py-1 text-sm font-medium rounded-md"
+                            className="text-primary-3 hover:bg-primary-2 group flex items-center px-2 py-1 text-xs font-medium rounded-md"
                           >
-                            {subItem.name}{" "}
+                            {subItem.name}
                           </Link>
                         ))}
                       </div>

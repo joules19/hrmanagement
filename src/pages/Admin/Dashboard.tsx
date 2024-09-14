@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
             count={dashboardData.employeeCount}
             title="Total Employees"
             icon={TeamOutlined}
-            color="#1890ff"
+            color="#B7EB8F"
             isMoney={false}
           />
           <DashboardCard
@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
             count={dashboardData.totalExpenses}
             title="Total Expenses"
             icon={SiExpensify}
-            color="#87CEEB"
+            color="#36A2EB"
             isMoney={true}
           />
         </div>

@@ -123,7 +123,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 error={formik.touched.status && formik.errors.status}
               />
               <div className="flex justify-end space-x-2 mt-4">
-                <div className="flex gap-2 w-[408px] h-[38px]">
+                <div className="flex gap-2 w-[308px] h-[38px]">
                   <div className="flex flex-1">
                     <Button
                       onClick={handleClose}

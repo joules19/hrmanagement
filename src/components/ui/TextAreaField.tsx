@@ -8,7 +8,8 @@ interface TextAreaFieldProps {
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   required?: boolean;
-  error?: string | false;
+  readOnly?: boolean;
+  error?: string | false | any;
   rows?: number;
 }
 
@@ -22,6 +23,7 @@ const TextAreaField: React.FC<TextAreaFieldProps> = ({
   required = false,
   error = "",
   rows = 3,
+  readOnly = false,
 }) => (
   <div className="mb-4">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700">

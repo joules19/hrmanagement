@@ -56,8 +56,8 @@ export const Button: FC<ButtonProps> = ({
   if (mode === "solid") {
     return (
       <button disabled={loading} className={solidBtnBg} {...props}>
+        {imageIcon !== undefined && <div className="mr-2">{imageIcon}</div>}
         {loading ? <Spinner /> : buttonText}
-        {imageIcon !== undefined && <div>{imageIcon}</div>}
       </button>
     );
   }

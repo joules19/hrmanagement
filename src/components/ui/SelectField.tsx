@@ -9,6 +9,7 @@ interface SelectFieldProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLSelectElement>) => void;
   required?: boolean;
+  disabled?: boolean;
   error?: string | boolean;
 }
 
@@ -22,6 +23,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   onBlur,
   required = false,
   error,
+  disabled = false,
 }) => {
   return (
     <div className="mb-4">
@@ -39,6 +41,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           required={required}
+          disabled={disabled}
           className={`block w-full border-[.8px] ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-md py-2 px-3 pr-8 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500`}

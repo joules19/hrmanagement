@@ -184,7 +184,7 @@ const EmployeeForm: React.FC = () => {
           />
         </div>
       </div>
-      <div className="w-[200px] h-[38px]">
+      <div className="w-[150px] h-[38px]">
         <Button
           mode={"solid"}
           buttonText="Save"
