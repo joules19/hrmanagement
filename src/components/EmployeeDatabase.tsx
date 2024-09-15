@@ -1,6 +1,4 @@
-import React from 'react';
-
-const EmployeeDatabase = ({ employeeData }) => {
+const EmployeeDatabase = ({ employeeData }: { employeeData: any[] }) => {
   return (
     <div className="card">
       <div className="card-body">
@@ -18,7 +16,7 @@ const EmployeeDatabase = ({ employeeData }) => {
             </tr>
           </thead>
           <tbody>
-            {employeeData.map(employee => (
+            {employeeData.map((employee) => (
               <tr key={employee.id}>
                 <td>{employee.id}</td>
                 <td>{employee.name}</td>

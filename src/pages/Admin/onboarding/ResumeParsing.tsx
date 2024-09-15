@@ -1,70 +1,60 @@
 import React, { useState, useEffect } from "react";
-import ResumeParseForm from "../../../components/forms/ResumeParseForm";
-import { ParsedResume } from "../../../types/onboarding";
 import {
   CloudArrowDownIcon,
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import PageTitle from "../../../components/ui/PageTitle";
+import ResumeParseForm from "../../../components/forms/ResumeParseForm";
+import { ParsedResume } from "../../../types/onboarding";
 
-// Resume item component
-const ResumeItem = ({
-  resume,
-  handleEdit,
-  handleDelete,
-}: {
+const ResumeItem: React.FC<{
   resume: ParsedResume;
   handleEdit: (resume: ParsedResume) => void;
   handleDelete: (id: number) => void;
-}) => {
-  return (
-    <li className="p-6 mb-4 bg-white border-[.8px] rounded-lg  hover:shadow-sm transition-shadow duration-300 ease-in-out">
-      <div className="flex flex-col sm:flex-row sm:justify-between">
-        {/* Main Info Section */}
-        <div className="flex-1">
-          <h5 className="text-xl font-semibold text-gray-800 mb-2">
-            {resume.candidateName}
-          </h5>
-          <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Email:</span> {resume.email}
-          </p>
-          <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Phone:</span> {resume.phone}
-          </p>
-          <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Skills:</span>{" "}
-            {resume.skills.join(", ")}
-          </p>
-          <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Experience:</span> {resume.experience}
-          </p>
-          <p className="text-sm text-gray-600 mb-1">
-            <span className="font-medium">Education:</span> {resume.education}
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="mt-4 sm:mt-0 sm:ml-4 flex items-center space-x-4">
-          <div className="flex space-x-2">
-            <button
-              className="text-primary-1 py-1 px-2 rounded"
-              onClick={() => handleEdit(resume)}
-            >
-              <PencilSquareIcon className="w-4 h-4" />
-            </button>
-            <button
-              className="text-red-500 py-1 px-2 rounded"
-              onClick={() => handleDelete(resume.id)}
-            >
-              <TrashIcon className="w-4 h-4" />
-            </button>
-          </div>
+}> = ({ resume, handleEdit, handleDelete }) => (
+  <li className="p-6 mb-4 bg-white border-[.8px] rounded-lg hover:shadow-sm transition-shadow duration-300 ease-in-out">
+    <div className="flex flex-col sm:flex-row sm:justify-between">
+      <div className="flex-1">
+        <h5 className="text-xl font-semibold text-gray-800 mb-2">
+          {resume.candidateName}
+        </h5>
+        <p className="text-sm text-gray-600 mb-1">
+          <span className="font-medium">Email:</span> {resume.email}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          <span className="font-medium">Phone:</span> {resume.phone}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          <span className="font-medium">Skills:</span>{" "}
+          {resume.skills.join(", ")}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          <span className="font-medium">Experience:</span> {resume.experience}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          <span className="font-medium">Education:</span> {resume.education}
+        </p>
+      </div>
+      <div className="mt-4 sm:mt-0 sm:ml-4 flex items-center space-x-4">
+        <div className="flex space-x-2">
+          <button
+            className="text-primary-1 py-1 px-2 rounded"
+            onClick={() => handleEdit(resume)}
+          >
+            <PencilSquareIcon className="w-4 h-4" />
+          </button>
+          <button
+            className="text-red-500 py-1 px-2 rounded"
+            onClick={() => handleDelete(resume.id)}
+          >
+            <TrashIcon className="w-4 h-4" />
+          </button>
         </div>
       </div>
-    </li>
-  );
-};
+    </div>
+  </li>
+);
 
 const ResumeParsing: React.FC = () => {
   const [parsedResumes, setParsedResumes] = useState<ParsedResume[]>([]);
@@ -107,19 +97,8 @@ const ResumeParsing: React.FC = () => {
     setParsedResumes(mockParsedResumes);
   }, []);
 
-  //   const handleInputChange = (
-  //     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  //   ) => {
-  //     const { name, value } = e.target;
-  //     if (editingResume) {
-  //       setEditingResume({ ...editingResume, [name]: value });
-  //     } else {
-  //       setNewResume({ ...newResume, [name]: value });
-  //     }
-  //   };
-
-  const handleSkillsChange = (e: any) => {
-    const skills = e.target.value.split(",").map((skill: any) => skill.trim());
+  const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const skills = e.target.value.split(",").map((skill) => skill.trim());
     if (editingResume) {
       setEditingResume({ ...editingResume, skills });
     } else {
@@ -168,6 +147,7 @@ const ResumeParsing: React.FC = () => {
   const handleUpload = async () => {
     if (file) {
       console.log("Uploading file:", file.name);
+      // Simulating parsed result
       const parsedResult: Omit<ParsedResume, "id"> = {
         candidateName: "Parsed Name",
         email: "parsed@example.com",
@@ -184,7 +164,6 @@ const ResumeParsing: React.FC = () => {
   return (
     <div className="flex flex-col">
       <PageTitle title="Resume Parsing" />
-
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="flex flex-col w-full">
           <div className="flex gap-4 mb-8">

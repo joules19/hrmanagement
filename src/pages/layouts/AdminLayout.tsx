@@ -18,6 +18,7 @@ import {
   Bars3BottomLeftIcon,
   BellIcon,
   BoltIcon,
+  CalendarDateRangeIcon,
   CalendarIcon,
   ChartBarIcon,
   CurrencyDollarIcon,
@@ -32,6 +33,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 import { Link, Outlet } from "react-router-dom";
+import NotificationButton from "../../components/ui/NotificationButton";
 
 // Define types for navigation items
 type SubmenuItem = {
@@ -93,7 +95,7 @@ const navigation: NavigationItem[] = [
   {
     name: "Time & Attendance",
     href: "#",
-    icon: CalendarIcon,
+    icon: CalendarDateRangeIcon,
     current: false,
     submenu: [
       { name: "Time Tracking", href: "attendance/time-tracking" },
@@ -410,7 +412,8 @@ export default function Example() {
                   className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-2 focus:ring-offset-2"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
+                  <NotificationButton />
                 </button>
 
                 {/* Profile dropdown */}
