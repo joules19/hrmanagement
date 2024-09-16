@@ -169,7 +169,7 @@ const EmployeeForm: React.FC = () => {
             value={formik.values.phone}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            required
+            // required
             error={formik.touched.phone && formik.errors.phone}
           />
           <InputField
@@ -231,7 +231,7 @@ const EmployeeForm: React.FC = () => {
           <div>
             <Alert
               message="Tip"
-              description="You can upload your CV to pre-fill the form with your information."
+              description="You can upload Employee CV to pre-fill the form."
               type="info"
               showIcon
               className="mb-4"
