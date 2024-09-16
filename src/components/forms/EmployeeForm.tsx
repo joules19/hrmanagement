@@ -53,9 +53,11 @@ const EmployeeForm: React.FC = () => {
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-      phone: Yup.string()
-        .matches(/^(\+?\d{1,3}[- ]?)?\d{10}$/, "Phone number is not valid")
-        .required("Phone is required"),
+      phone: Yup.string().matches(
+        /^(\+?\d{1,3}[- ]?)?\d{10}$/,
+        "Phone number is not valid"
+      ),
+      // .required("Phone is required")
       dob: Yup.date().required("Date of Birth is required"),
       address: Yup.string().required("Address is required"),
       state: Yup.string().required("State is required"),
