@@ -1,4 +1,3 @@
-// EmployeeForm.tsx
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -6,6 +5,9 @@ import InputField from "../ui/InputField";
 import FileInput from "../ui/FileInput";
 import SelectField from "../ui/SelectField";
 import { Button } from "../ui/Button";
+import axios from "axios"; // Axios for making API requests
+import { toast } from "sonner";
+import { Alert } from "antd";
 
 const positions = ["Manager", "Developer", "Designer", "QA", "HR"];
 const departments = ["Engineering", "Marketing", "Sales", "HR"];
@@ -28,6 +30,8 @@ interface Employee {
 
 const EmployeeForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Formik setup
   const formik = useFormik<Employee>({
     initialValues: {
       name: "",
@@ -59,9 +63,53 @@ const EmployeeForm: React.FC = () => {
     }),
     onSubmit: (values) => {
       console.log("Form submitted:", values);
-      // Add further submission logic here
     },
   });
+
+  // Trigger the API call when resume is uploaded
+  const handleResumeUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.currentTarget.files?.[0];
+    if (file) {
+      formik.setFieldValue("resume", file);
+      setIsLoading(true);
+
+      // Create a form data object
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        // Call the API endpoint
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/extract-info/",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        // Assuming the response data contains personal information like name, email, etc.
+        const { name, email, address, phone } = response.data;
+
+        // Populate the form with the extracted data
+        formik.setFieldValue("name", name || "");
+        formik.setFieldValue("email", email || "");
+        formik.setFieldValue("address", address || "");
+        formik.setFieldValue("phone", phone || "");
+
+        toast.success("Employee CV parsed successfully", {
+          duration: 5000,
+        });
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error uploading resume:", error);
+        setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <form onSubmit={formik.handleSubmit} className="w-full mx-auto">
@@ -154,7 +202,7 @@ const EmployeeForm: React.FC = () => {
             options={states}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            required
+            // required
             error={formik.touched.state && formik.errors.state}
           />
           <SelectField
@@ -172,16 +220,29 @@ const EmployeeForm: React.FC = () => {
             label="Passport Photo"
             id="passport"
             accept="image/*"
+            onChange={(event) =>
+              formik.setFieldValue("passport", event.currentTarget.files?.[0])
+            }
             required
             error={formik.touched.passport && formik.errors.passport}
           />
-          <FileInput
-            label="Resume"
-            id="resume"
-            accept=".pdf,.doc,.docx"
-            required
-            error={formik.touched.resume && formik.errors.resume}
-          />
+          <div>
+            <Alert
+              message="Tip"
+              description="You can upload your CV to pre-fill the form with your information."
+              type="info"
+              showIcon
+              className="mb-4"
+            />
+            <FileInput
+              label="Resume"
+              id="resume"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeUpload}
+              required
+              error={formik.touched.resume && formik.errors.resume}
+            />
+          </div>
         </div>
       </div>
       <div className="w-[150px] h-[38px]">
