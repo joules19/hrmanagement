@@ -30,6 +30,9 @@ import store from "./store/index.ts";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider.tsx";
 import { Provider } from "react-redux";
 import { getSession, clearSession } from "./utils/sessionManager.ts";
+import AddJobHistory from "./pages/Admin/AddJobHistory.tsx";
+import EmployeeDocumentManager from "./pages/Admin/EmployeeDocumentManager.tsx";
+// import AddDocument from "./pages/Admin/AddDocument.tsx";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const session = getSession();
@@ -71,7 +74,21 @@ const router = createBrowserRouter([
         element: <AddEmployee />,
         errorElement: <NotFoundPage />,
       },
-
+      {
+        path: "/employees/job-history",
+        element: <AddJobHistory />,
+        errorElement: <NotFoundPage />,
+      },
+      // {
+      //   path: "/employees/documents",
+      //   element: <AddDocument />,
+      //   errorElement: <NotFoundPage />,
+      // },
+      {
+        path: "/employees/documents",
+        element: <EmployeeDocumentManager />,
+        errorElement: <NotFoundPage />,
+      },
       // Onboarding Routes
       {
         path: "/onboarding/job-postings",
