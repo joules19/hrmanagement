@@ -11,8 +11,7 @@ import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import { Dashboard } from "./pages/admin/index.ts";
 import AdminLayout from "./pages/layouts/AdminLayout.tsx";
-import EmployeeList from "./pages/admin/EmployeeList.tsx";
-import AddEmployee from "./pages/admin/AddEmployee.tsx";
+import AddEmployee from "./pages/admin/employee/AddEmployee.tsx";
 import JobPosting from "./pages/admin/onboarding/JobPosting.tsx";
 import Applications from "./pages/admin/onboarding/Applications.tsx";
 import OnboardingProcess from "./pages/admin/onboarding/OnboardingProcess.tsx";
@@ -30,8 +29,13 @@ import store from "./store/index.ts";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider.tsx";
 import { Provider } from "react-redux";
 import { getSession, clearSession } from "./utils/sessionManager.ts";
-import AddJobHistory from "./pages/Admin/AddJobHistory.tsx";
-import EmployeeDocumentManager from "./pages/Admin/EmployeeDocumentManager.tsx";
+import AddJobHistory from "./pages/admin/employee/AddJobHistory.tsx";
+import EmployeeDocumentManager from "./pages/admin/employee/EmployeeDocumentManager.tsx";
+import EmployeeList from "./pages/admin/employee/EmployeeList.tsx";
+import WebsiteLayout from "./pages/layouts/WebsiteLayout.tsx";
+import JobListings from "./pages/website/JobListings.tsx";
+import JobDetails from "./pages/website/JobDetails.tsx";
+
 // import AddDocument from "./pages/Admin/AddDocument.tsx";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
@@ -41,6 +45,22 @@ const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 };
 
 const router = createBrowserRouter([
+  //Website Section
+  {
+    element: <WebsiteLayout />,
+    children: [
+      {
+        path: "/careers/job-listing",
+        element: <JobListings />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/careers/job-listing/:id",
+        element: <JobDetails />,
+        errorElement: <NotFoundPage />,
+      },
+    ],
+  },
   //Auth Section
   {
     element: <AuthLayout />,

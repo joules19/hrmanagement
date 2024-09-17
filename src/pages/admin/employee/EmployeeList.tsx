@@ -1,6 +1,6 @@
 import React from "react";
-import PageTitle from "../../components/ui/PageTitle";
-import EmployeeTable from "../../components/tables/EmployeeListTable";
+import PageTitle from "../../../components/ui/PageTitle";
+import EmployeeListTable from "../../../components/tables/EmployeeListTable";
 
 const EmployeeList: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const EmployeeList: React.FC = () => {
 
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="flex w-full">
-          <EmployeeTable />
+          <EmployeeListTable />
         </div>
       </div>
     </div>

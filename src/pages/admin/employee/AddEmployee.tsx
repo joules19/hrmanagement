@@ -1,6 +1,6 @@
 import React from "react";
-import PageTitle from "../../components/ui/PageTitle";
-import EmployeeForm from "../../components/forms/EmployeeForm";
+import PageTitle from "../../../components/ui/PageTitle";
+import EmployeeForm from "../../../components/forms/EmployeeForm";
 
 const AddEmployee: React.FC = () => {
   return (

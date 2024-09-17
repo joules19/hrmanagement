@@ -1,6 +1,6 @@
 import React from "react";
-import PageTitle from "../../components/ui/PageTitle";
-import AddDocumentForm from "../../components/forms/AddDocumentForm";
+import PageTitle from "../../../components/ui/PageTitle";
+import AddDocumentForm from "../../../components/forms/AddDocumentForm";
 
 const AddDocument: React.FC = () => {
   return (

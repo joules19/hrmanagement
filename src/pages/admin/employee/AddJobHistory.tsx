@@ -1,6 +1,6 @@
 import React from "react";
-import PageTitle from "../../components/ui/PageTitle";
-import JobHistoryForm from "../../components/forms/JobHistoryForm";
+import PageTitle from "../../../components/ui/PageTitle";
+import JobHistoryForm from "../../../components/forms/JobHistoryForm";
 
 const AddJobHistory: React.FC = () => {
   return (
