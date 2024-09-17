@@ -1,33 +1,64 @@
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
-import { Dashboard } from "./pages/Admin/index.ts";
+import { Dashboard } from "./pages/admin/index.ts";
 import AdminLayout from "./pages/layouts/AdminLayout.tsx";
-import EmployeeList from "./pages/Admin/EmployeeList.tsx";
-import AddEmployee from "./pages/Admin/AddEmployee.tsx";
-import JobPosting from "./pages/Admin/onboarding/JobPosting.tsx";
-import Applications from "./pages/Admin/onboarding/Applications.tsx";
-import OnboardingProcess from "./pages/Admin/onboarding/OnboardingProcess.tsx";
-import ResumeParsing from "./pages/Admin/onboarding/ResumeParsing.tsx";
-import OnboardingWorkflow from "./pages/Admin/onboarding/OnboardingWorkflow.tsx";
-import InterviewScheduling from "./pages/Admin/onboarding/InterviewScheduling.tsx";
-import TimeTracking from "./pages/Admin/attendance/TimeTracking.tsx";
-import LeaveManagement from "./pages/Admin/attendance/LeaveManagement.tsx";
-import OvertimeManagement from "./pages/Admin/attendance/OvertimeManagement.tsx";
-import SalaryCalculations from "./pages/Admin/payroll/SalaryCalculations.tsx";
-import PayrollCompliance from "./pages/Admin/payroll/PayrollCompliance.tsx";
+import EmployeeList from "./pages/admin/EmployeeList.tsx";
+import AddEmployee from "./pages/admin/AddEmployee.tsx";
+import JobPosting from "./pages/admin/onboarding/JobPosting.tsx";
+import Applications from "./pages/admin/onboarding/Applications.tsx";
+import OnboardingProcess from "./pages/admin/onboarding/OnboardingProcess.tsx";
+import ResumeParsing from "./pages/admin/onboarding/ResumeParsing.tsx";
+import OnboardingWorkflow from "./pages/admin/onboarding/OnboardingWorkflow.tsx";
+import InterviewScheduling from "./pages/admin/onboarding/InterviewScheduling.tsx";
+import TimeTracking from "./pages/admin/attendance/TimeTracking.tsx";
+import LeaveManagement from "./pages/admin/attendance/LeaveManagement.tsx";
+import OvertimeManagement from "./pages/admin/attendance/OvertimeManagement.tsx";
+import SalaryCalculations from "./pages/admin/payroll/SalaryCalculations.tsx";
+import PayrollCompliance from "./pages/admin/payroll/PayrollCompliance.tsx";
+import Login from "./pages/auth/Login.tsx";
+import AuthLayout from "./pages/layouts/AuthLayout.tsx";
+import store from "./store/index.ts";
+import { ReactQueryProvider } from "./providers/ReactQueryProvider.tsx";
+import { Provider } from "react-redux";
+import { getSession, clearSession } from "./utils/sessionManager.ts";
+
+const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const session = getSession();
+  // const token = localStorage.getItem("userSession");
+  return session ? children : <Navigate to="/auth/login" />;
+};
 
 const router = createBrowserRouter([
+  //Auth Section
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "/auth/login",
+        element: <Login />,
+        errorElement: <NotFoundPage />,
+      },
+    ],
+  },
   {
     element: <AdminLayout />,
     children: [
       {
-        path: "/dashboard",
-        element: <Dashboard />,
+        path: "/",
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
         errorElement: <NotFoundPage />,
       },
       {
@@ -121,8 +152,12 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    <Toaster richColors position="top-right" expand={false} />
-    <App />
+    <Provider store={store}>
+      <ReactQueryProvider>
+        <RouterProvider router={router} />
+        <Toaster richColors position="top-right" expand={false} />
+        <App />
+      </ReactQueryProvider>
+    </Provider>
   </React.StrictMode>
 );

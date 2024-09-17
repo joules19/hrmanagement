@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Typography } from "antd";
-import { formatter1 } from "../../utils/helper-methods";
+import { formatter1 } from "../../utils/helperMethods";
 
 // Define the props for the DashboardCard component
 interface DashboardCardProps {

@@ -12,14 +12,12 @@
   }
   ```
 */
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3BottomLeftIcon,
-  BellIcon,
   BoltIcon,
   CalendarDateRangeIcon,
-  CalendarIcon,
   ChartBarIcon,
   CurrencyDollarIcon,
   DocumentCurrencyDollarIcon,
@@ -32,8 +30,10 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import NotificationButton from "../../components/ui/NotificationButton";
+import { clearSession, getSession } from "../../utils/sessionManager";
+import LogoutButton from "../../components/ui/LogoutButton";
 
 // Define types for navigation items
 type SubmenuItem = {
@@ -55,7 +55,7 @@ type UserNavigationItem = {
 };
 
 const navigation: NavigationItem[] = [
-  { name: "Dashboard", href: "dashboard", icon: HomeIcon, current: true },
+  { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
   {
     name: "Employee",
     href: "#",
@@ -79,7 +79,7 @@ const navigation: NavigationItem[] = [
   //   ],
   // },
   {
-    name: "Onboarding",
+    name: "Recruitment & Onboarding",
     href: "#",
     icon: UserPlusIcon,
     current: false,
@@ -178,8 +178,8 @@ const navigation: NavigationItem[] = [
 ];
 
 const userNavigation: UserNavigationItem[] = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
+  // { name: "Your Profile", href: "#" },
+  // { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
@@ -187,9 +187,20 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
+  const [userDetails, setUserDetails] = useState<any>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const session = getSession();
+    if (session) {
+      setUserDetails(session);
+    } else {
+      navigate("/login"); // Redirect to login if no session is found
+    }
+  }, [navigate]);
 
   const toggleSubmenu = (name: string) => {
     setOpenSubmenus((prev) => ({ ...prev, [name]: !prev[name] }));
@@ -279,7 +290,7 @@ export default function Example() {
                               item.current
                                 ? "bg-primary-2 text-white"
                                 : "text-primary-3 hover:bg-primary-2",
-                              "group  flex items-center px-1 py-2 text-sm font-medium rounded-md"
+                              "group flex items-center px- border py-2 text-sm font-medium rounded-md"
                             )}
                           >
                             <item.icon
@@ -409,15 +420,17 @@ export default function Example() {
               <div className="ml-4 flex items-center md:ml-6">
                 <button
                   type="button"
-                  className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-2 focus:ring-offset-2"
+                  className="rounded-full bg-white p-1 mr-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-2 focus:ring-offset-2"
                 >
                   <span className="sr-only">View notifications</span>
                   {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
                   <NotificationButton />
                 </button>
 
+                {/* LOGOUT Button */}
+                <LogoutButton />
                 {/* Profile dropdown */}
-                <Menu as="div" className="relative ml-3">
+                {/* <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-2 focus:ring-offset-2">
                       <span className="sr-only">Open user menu</span>
@@ -441,21 +454,22 @@ export default function Example() {
                       {userNavigation.map((item) => (
                         <Menu.Item key={item.name}>
                           {({ active }) => (
-                            <a
-                              href={item.href}
+                            <button
+                              onClick={() => handleLogout()}
+                              //href={item.href}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
                               )}
                             >
                               {item.name}
-                            </a>
+                            </button>
                           )}
                         </Menu.Item>
                       ))}
                     </Menu.Items>
                   </Transition>
-                </Menu>
+                </Menu> */}
               </div>
             </div>
           </div>

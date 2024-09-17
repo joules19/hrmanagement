@@ -8,6 +8,7 @@ import { Button } from "../ui/Button";
 import axios from "axios"; // Axios for making API requests
 import { toast } from "sonner";
 import { Alert } from "antd";
+import { useLoginMutation } from "../../store/services/authApi";
 
 const positions = ["Manager", "Developer", "Designer", "QA", "HR"];
 const departments = ["Engineering", "Marketing", "Sales", "HR"];
@@ -30,6 +31,7 @@ interface Employee {
 
 const EmployeeForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [login, { data: verifyEmailData }] = useLoginMutation();
 
   // Formik setup
   const formik = useFormik<Employee>({
@@ -80,11 +82,12 @@ const EmployeeForm: React.FC = () => {
       // Create a form data object
       const formData = new FormData();
       formData.append("file", file);
+      await login(formData);
 
       try {
         // Call the API endpoint
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/extract-info/",
+          "https://odoobros.pythonanywhere.com/api/extract-info/",
           formData,
           {
             headers: {
@@ -111,6 +114,12 @@ const EmployeeForm: React.FC = () => {
         setIsLoading(false);
       }
     }
+  };
+
+  const customAlertStyle = {
+    backgroundColor: "#E3F2FD", // Light shade of primary color for background
+    borderColor: "#36A2EB", // Primary color for border
+    color: "#0369A1", // Darker shade of primary color for text
   };
 
   return (
@@ -231,10 +240,11 @@ const EmployeeForm: React.FC = () => {
           <div>
             <Alert
               message="Tip"
-              description="You can upload Employee CV to pre-fill the form."
+              description="You can upload employee resume to pre-fill the form."
               type="info"
               showIcon
               className="mb-4"
+              style={customAlertStyle} // Custom style applied
             />
             <FileInput
               label="Resume"

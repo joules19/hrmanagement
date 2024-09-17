@@ -1,5 +1,5 @@
-import React from "react";
-import { dashboardData } from "./../../data/mockData";
+import React, { useEffect, useState } from "react";
+import { dashboardData } from "../../data/mockData";
 import { AppstoreAddOutlined, TeamOutlined } from "@ant-design/icons";
 import { SiExpensify } from "react-icons/si";
 import DashboardCard from "../../components/cards/DashboardCard";

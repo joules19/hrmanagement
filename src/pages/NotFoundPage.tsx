@@ -15,7 +15,7 @@ const NotFound = () => {
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link
-            to="/dashboard"
+            to="/"
             className="rounded-md  px-3.5 py-[6px] text-sm font-semibold text-primary-1 hover:bg-primary-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
           >
             <span aria-hidden="true">&larr; &nbsp;</span>Go To Dashboard

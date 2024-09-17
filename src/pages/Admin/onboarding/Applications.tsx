@@ -54,7 +54,7 @@ const Applications: React.FC = () => {
       <PageTitle title="Job Applications" />
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="flex flex-col w-full ">
-          <div className="flex  w-[200px] h-[38px] mb-4">
+          {/* <div className="flex  w-[200px] h-[38px] mb-4">
             <Button
               onClick={() => handleShowModal(null)}
               mode={"solid"}
@@ -63,7 +63,7 @@ const Applications: React.FC = () => {
               defaultColor="primary-1"
               hoverColor="primary-2"
             />
-          </div>
+          </div> */}
           <ApplicationTable />
           {showModal && (
             <ApplicationModal
