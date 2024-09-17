@@ -198,7 +198,7 @@ export default function AdminLayout() {
     if (session) {
       setUserDetails(session);
     } else {
-      navigate("/login"); // Redirect to login if no session is found
+      navigate("/auth/login"); // Redirect to login if no session is found
     }
   }, [navigate]);
 
