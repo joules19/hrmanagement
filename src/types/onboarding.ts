@@ -4,7 +4,8 @@ export interface JobPosting {
   department: string;
   location: string;
   description: string;
-  requirements: string;
+  qualifications: string[];
+  requirements: string[];
   status: "Open" | "Closed" | "On Hold";
   postedDate: string;
 }

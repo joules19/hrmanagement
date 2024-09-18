@@ -18,7 +18,7 @@ const JobPosting: React.FC = () => {
     if (savedPostings) {
       setJobPostings(JSON.parse(savedPostings));
     }
-  }, []);
+  }, []); 
 
   useEffect(() => {
     // Save job postings to local storage whenever it changes

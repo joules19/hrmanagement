@@ -6,6 +6,8 @@ import SelectField from "../ui/SelectField";
 import { Button } from "../ui/Button";
 import { JobPosting } from "../../types/onboarding";
 import TextAreaField from "../ui/TextAreaField";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface JobPostingModalProps {
   show: boolean;
@@ -21,6 +23,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   onSave,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [qualifications, setQualifications] = useState<string[]>(currentPosting?.qualifications || [""]);
+  const [requirements, setRequirements] = useState<string[]>(currentPosting?.requirements || [""]);
 
   const formik = useFormik<JobPosting>({
     initialValues: {
@@ -28,7 +32,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
       department: currentPosting?.department || "",
       location: currentPosting?.location || "",
       description: currentPosting?.description || "",
-      requirements: currentPosting?.requirements || "",
+      qualifications: currentPosting?.qualifications || [""],
+      requirements: currentPosting?.requirements || [""],
       status: currentPosting?.status || "Open",
       postedDate:
         currentPosting?.postedDate || new Date().toISOString().split("T")[0],
@@ -38,17 +43,82 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
       department: Yup.string().required("Department is required"),
       location: Yup.string().required("Location is required"),
       description: Yup.string().required("Description is required"),
-      requirements: Yup.string().required("Requirements are required"),
+      qualifications: Yup.array().of(Yup.string().required("Qualification is required")),
+      requirements: Yup.array().of(Yup.string().required("Requirement is required")),
       status: Yup.string().required("Status is required"),
     }),
     onSubmit: (values) => {
       const newPosting: JobPosting = {
         ...values,
         id: currentPosting?.id || Date.now(),
+        qualifications: qualifications.filter(q => q.trim() !== ""),
+        requirements: requirements.filter(r => r.trim() !== ""),
       };
       onSave(newPosting);
     },
   });
+
+  const handleAddField = (field: 'qualifications' | 'requirements') => {
+    if (field === 'qualifications') {
+      setQualifications([...qualifications, ""]);
+    } else {
+      setRequirements([...requirements, ""]);
+    }
+  };
+
+  const handleRemoveField = (field: 'qualifications' | 'requirements', index: number) => {
+    if (field === 'qualifications') {
+      setQualifications(qualifications.filter((_, i) => i !== index));
+    } else {
+      setRequirements(requirements.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleFieldChange = (field: 'qualifications' | 'requirements', index: number, value: string) => {
+    if (field === 'qualifications') {
+      const newQualifications = [...qualifications];
+      newQualifications[index] = value;
+      setQualifications(newQualifications);
+    } else {
+      const newRequirements = [...requirements];
+      newRequirements[index] = value;
+      setRequirements(newRequirements);
+    }
+  };
+
+  const renderDynamicFields = (field: 'qualifications' | 'requirements', values: string[], label: string) => (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      {values.map((value, index) => (
+        <div key={index} className="flex items-center mb-2">
+          <input
+            type="text"
+            id={`${field}-${index}`}
+            name={`${field}-${index}`}
+            value={value}
+            onChange={(e) => handleFieldChange(field, index, e.target.value)}
+            className="flex-grow mr-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+
+          <button onClick={() => handleAddField(field)} className="text-green-500 py-1 px-2 rounded">
+            <PlusCircleIcon className="w-4 h-4" />
+          </button>
+
+          {values.length > 1 && (
+            <button
+              onClick={() => handleRemoveField(field, index)}
+              className="text-red-500 py-1 px-2 rounded"
+            >
+              <TrashIcon className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <>
@@ -99,18 +169,10 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 required
                 error={formik.touched.description && formik.errors.description}
               />
-              <TextAreaField
-                label="Requirements"
-                id="requirements"
-                name="requirements"
-                value={formik.values.requirements}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                required
-                error={
-                  formik.touched.requirements && formik.errors.requirements
-                }
-              />
+
+              {renderDynamicFields('qualifications', qualifications, 'Qualifications')}
+              {renderDynamicFields('requirements', requirements, 'Requirements')}
+
               <SelectField
                 label="Status"
                 id="status"
@@ -127,7 +189,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                   <div className="flex flex-1">
                     <Button
                       onClick={handleClose}
-                      mode={"outline"}
+                      mode="outline"
                       buttonText="Close"
                       defaultColor="primary-1"
                       hoverColor="primary-2"
@@ -135,7 +197,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                   </div>
                   <div className="flex flex-1">
                     <Button
-                      mode={"solid"}
+                      type="submit"
+                      mode="solid"
                       buttonText="Save"
                       loading={isLoading}
                       defaultColor="primary-1"
