@@ -7,6 +7,7 @@ import { createSession } from "../../utils/sessionManager";
 import { notification } from "antd";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/ui/Button";
+import { Radio } from "antd";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -19,6 +20,7 @@ const validationSchema = Yup.object({
 const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loginAsAdmin, setLoginAsAdmin] = useState(false);
   const navigate = useNavigate();
 
   // Formik setup
@@ -35,7 +37,10 @@ const Login: React.FC = () => {
         // Simulate a login API call
         const response = await axios.post(
           "https://fha-app-api-uu9ty.ondigitalocean.app/api/v1/auth/customer/login",
-          values
+          {
+            ...values,
+            isAdmin: loginAsAdmin,
+          }
         );
         console.log(response);
         if (response.status === 201) {
@@ -81,7 +86,7 @@ const Login: React.FC = () => {
   return (
     <>
       <div
-        className="min-h-screen flex items-start justify-center  rounded-[4px] my-"
+        className="min-h-screen flex items-start justify-center rounded-[4px] my-"
         style={{
           backgroundImage: `radial-gradient(circle, rgba(54, 162, 235, 0.6) 1px, rgba(54, 162, 235, 0) 1px)`,
           backgroundSize: "20px 20px", // Adjust size of the pattern
@@ -91,9 +96,6 @@ const Login: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6 text-center text-[#36A2EB]">
             Sign in to your account
           </h2>
-          {/* {formik.errors.email && (
-          <p className="text-red-500 text-center mb-4">{formik.errors.email}</p>
-        )} */}
           <form onSubmit={formik.handleSubmit}>
             <div className="mb-4">
               <label
@@ -129,7 +131,7 @@ const Login: React.FC = () => {
               />
               <span
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                className=" h-full absolute inset-y-0 right-0 flex items-center pr-3 mt-[14px] cursor-pointer"
+                className="h-full absolute inset-y-0 right-0 flex items-center pr-3 mt-[14px] cursor-pointer"
               >
                 {passwordVisible && (
                   <EyeSlashIcon className="text-gray-500 w-5 h-5" />
@@ -143,6 +145,31 @@ const Login: React.FC = () => {
                   {formik.errors.password}
                 </div>
               ) : null}
+            </div>
+            <div className="mb-4 flex items-center">
+              <input type="checkbox" id="rememberMe" className="mr-2" />
+              <label htmlFor="rememberMe" className="text-gray-700">
+                Remember me
+              </label>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Login as
+              </label>
+              <Radio.Group
+                onChange={(e) => setLoginAsAdmin(e.target.value)}
+                value={loginAsAdmin}
+              >
+                <Radio value={false} className="mr-4">
+                  Employee
+                </Radio>
+                <Radio value={true}>Admin</Radio>
+              </Radio.Group>
+            </div>
+            <div className="mb-6 text-right">
+              <a href="#" className="text-[#36A2EB] hover:underline">
+                Forgot password?
+              </a>
             </div>
             <div className="w-full h-[38px]">
               <Button
