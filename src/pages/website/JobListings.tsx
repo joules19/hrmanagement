@@ -60,7 +60,7 @@ const JobListings: React.FC = () => {
               key={job.id}
               className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
             >
-              <Link to={`/careers/job-listing/${job.id}`}>
+              <Link to={`/job-listing/${job.id}`}>
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
                   {job.title}
                 </h2>

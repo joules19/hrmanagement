@@ -35,7 +35,7 @@ const IconSection = () => {
             style={{ backgroundColor: "#F0F8FF" }} // Added background color
           />
           <h3 className="text-xl font-semibold text-gray-800">Career Growth</h3>
-          <p className="text-gray-600">We help you build a future</p>
+          <p className="text-gray-600">We help you build an future</p>
         </Card>
       </Col>
       <Col xs={24} sm={12} md={8}>

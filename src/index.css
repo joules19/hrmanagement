@@ -14,6 +14,8 @@ select {
   text-indent: 1px;
   text-overflow: "";
 }
+
+/* STYLES OVERIDE FOR ANT */
 .ant-typography,
 .ant-btn,
 .ant-card,
@@ -30,4 +32,23 @@ select {
 .ant-list,
 .ant-menu {
   font-family: "Lato", sans-serif;
+}
+
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-item::after,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-item::after,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-submenu::after,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu::after {
+  position: absolute;
+  display: none !important;
+  inset-inline: 16px;
+  bottom: 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  content: "";
 }

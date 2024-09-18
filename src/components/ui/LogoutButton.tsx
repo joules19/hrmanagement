@@ -14,7 +14,7 @@ const LogoutButton: React.FC = () => {
     clearSession();
 
     // Redirect to login page
-    navigate("/auth/login");
+    navigate("/");
     notification.success({
       message: "Logged Out",
       description: "You have successfully logged out.",

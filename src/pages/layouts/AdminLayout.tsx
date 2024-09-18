@@ -269,8 +269,11 @@ export default function AdminLayout() {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex flex-shrink-0 items-center px-4">
-                    <h1 className="text-primary-3 text-xl font-semibold">
+                  <div
+                    onClick={() => navigate("/")}
+                    className="flex flex-shrink-0 items-center px-4"
+                  >
+                    <h1 className="text-primary-3 text-xl font-semibold cursor pointer">
                       HR Management
                     </h1>
                   </div>
@@ -332,7 +335,10 @@ export default function AdminLayout() {
         <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex flex-grow flex-col overflow-y-auto bg-primary-1 pt-5">
-            <div className="flex flex-shrink-0 items-center px-4">
+            <div
+              onClick={() => navigate("/")}
+              className="flex flex-shrink-0 items-center px-4 cursor-pointer"
+            >
               <h1 className="text-primary-3 text-xl font-semibold">
                 HR Management
               </h1>

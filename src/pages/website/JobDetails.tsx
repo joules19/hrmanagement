@@ -25,6 +25,7 @@ import {
 } from "react-icons/fa";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
+import AppSpinner from "../../components/ui/Spinner";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -63,6 +64,7 @@ const JobDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [isParsingCv, setIsParsingCv] = useState(false);
 
   // Handle the modal visibility
   const showModal = () => {
@@ -75,6 +77,7 @@ const JobDetails: React.FC = () => {
 
   // Handle file upload and prefill fields
   const handleResumeUpload = async (file: any) => {
+    setIsParsingCv(true);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -100,8 +103,10 @@ const JobDetails: React.FC = () => {
         address,
       });
 
+      setIsParsingCv(false);
       message.success("Resume uploaded and form prefills loaded successfully!");
     } catch (error) {
+      setIsParsingCv(false);
       message.error("Failed to upload resume and load form data.");
     }
 
@@ -129,7 +134,7 @@ const JobDetails: React.FC = () => {
               {/* Back to Listings Link */}
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Link
-                  to="/careers/job-listing"
+                  to="/"
                   className="rounded-md px-3.5 py-[6px] text-sm font-semibold text-primary-1 hover:bg-primary-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
                 >
                   <span aria-hidden="true">&larr; &nbsp;</span> Back to Listings
@@ -242,6 +247,7 @@ const JobDetails: React.FC = () => {
         bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
       >
         <Form layout="vertical" form={form} onFinish={handleSubmit}>
+          {isParsingCv && <AppSpinner color="#36A2EB" />}
           {/* Upload Resume with Tooltip */}
           <Form.Item label="Upload Resume" name="resume">
             <Tooltip title="Upload a resume to pre-fill the form fields.">

@@ -7,7 +7,6 @@ import { createSession } from "../../utils/sessionManager";
 import { notification } from "antd";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/ui/Button";
-import PageTitle from "../../components/ui/PageTitle";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -64,7 +63,7 @@ const Login: React.FC = () => {
             });
 
             // Redirect to dashboard
-            navigate("/");
+            navigate("/dashboard");
           }, 200); // 200ms delay
         }
       } catch (err) {
@@ -82,13 +81,13 @@ const Login: React.FC = () => {
   return (
     <>
       <div
-        className="min-h-screen flex items-start justify-center bg-primary-3 rounded-[4px]"
+        className="min-h-screen flex items-start justify-center  rounded-[4px] my-"
         style={{
-          backgroundImage: `radial-gradient(circle, rgba(54, 162, 235, 0.3) 1px, rgba(54, 162, 235, 0) 1px)`,
+          backgroundImage: `radial-gradient(circle, rgba(54, 162, 235, 0.6) 1px, rgba(54, 162, 235, 0) 1px)`,
           backgroundSize: "20px 20px", // Adjust size of the pattern
         }}
       >
-        <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-[10rem]">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-[6rem]">
           <h2 className="text-2xl font-bold mb-6 text-center text-[#36A2EB]">
             Sign in to your account
           </h2>

@@ -18,7 +18,7 @@ const NotFound = () => {
             to="/"
             className="rounded-md  px-3.5 py-[6px] text-sm font-semibold text-primary-1 hover:bg-primary-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
           >
-            <span aria-hidden="true">&larr; &nbsp;</span>Go To Dashboard
+            <span aria-hidden="true">&larr; &nbsp;</span>Go To Home
           </Link>
         </div>
       </div>

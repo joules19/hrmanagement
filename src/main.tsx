@@ -50,33 +50,29 @@ const router = createBrowserRouter([
     element: <WebsiteLayout />,
     children: [
       {
-        path: "/careers/job-listing",
+        path: "/auth/login",
+        element: <Login />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/",
         element: <JobListings />,
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/careers/job-listing/:id",
+        path: "/job-listing/:id",
         element: <JobDetails />,
         errorElement: <NotFoundPage />,
       },
     ],
   },
   //Auth Section
-  {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: "/auth/login",
-        element: <Login />,
-        errorElement: <NotFoundPage />,
-      },
-    ],
-  },
+
   {
     element: <AdminLayout />,
     children: [
       {
-        path: "/",
+        path: "/dashboard",
         element: (
           <PrivateRoute>
             <Dashboard />
