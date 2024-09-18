@@ -55,7 +55,7 @@ type UserNavigationItem = {
 };
 
 const navigation: NavigationItem[] = [
-  { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
   {
     name: "Employee",
     href: "#",
@@ -79,14 +79,14 @@ const navigation: NavigationItem[] = [
   //   ],
   // },
   {
-    name: "Recruitment & Onboarding",
+    name: "Recruitment",
     href: "#",
     icon: UserPlusIcon,
     current: false,
     submenu: [
       { name: "Job Postings", href: "onboarding/job-postings" },
       { name: "Applications", href: "onboarding/applications" },
-      { name: "Resume Parsing", href: "onboarding/resume-parsing" },
+      // { name: "Resume Parsing", href: "onboarding/resume-parsing" },
       { name: "Interview Scheduling", href: "onboarding/interview-scheduling" },
       { name: "Onboarding Workflows", href: "onboarding/onboarding-workflows" },
       { name: "Onboarding Process", href: "onboarding/onboarding-process" },
@@ -481,7 +481,7 @@ export default function AdminLayout() {
           </div>
 
           <main>
-            <div className="py-">
+            <div className="py-8">
               <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
                 {/* Replace with your content */}
                 <Outlet />

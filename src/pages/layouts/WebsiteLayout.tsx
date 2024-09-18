@@ -43,12 +43,12 @@ export default function WebsiteLayout() {
             className="text-xl font-semibold cursor-pointer"
             style={{ margin: 0, color: "#fff" }}
           >
-            HR Management
+            HR Place
           </h1>
         </div>
 
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Menu
+          {/* <Menu
             mode="horizontal"
             selectedKeys={[current]}
             onClick={handleMenuClick}
@@ -63,14 +63,14 @@ export default function WebsiteLayout() {
                 Careers
               </Link>
             </Menu.Item>
-          </Menu>
+          </Menu> */}
 
           {/* Login Button in Header */}
           {!userDetails && (
             <Button
               onClick={() => navigate("/auth/login")}
               type="primary"
-              shape="round"
+              shape="default"
               style={{
                 backgroundColor: "#fff",
                 color: "#36A2EB",
@@ -86,7 +86,7 @@ export default function WebsiteLayout() {
             <Button
               onClick={() => navigate("/dashboard")}
               type="primary"
-              shape="round"
+              shape="default"
               style={{
                 backgroundColor: "#fff",
                 color: "#36A2EB",
