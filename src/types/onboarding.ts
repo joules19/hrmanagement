@@ -6,8 +6,13 @@ export interface JobPosting {
   description: string;
   qualifications: string[];
   requirements: string[];
+  benefits: string[];
   status: "Open" | "Closed" | "On Hold";
   postedDate: string;
+  salaryMin: string;
+  salaryMax: string;
+  jobType: string;
+  workLocationType: string;
 }
 
 export interface Application {
@@ -15,6 +20,7 @@ export interface Application {
   applicantName: string;
   position: string;
   status: string;
+  dateApplied: string;
 }
 
 export interface OnboardingStep {
