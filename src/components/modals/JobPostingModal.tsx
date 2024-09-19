@@ -29,96 +29,113 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   onSave,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formValues, setFormValues] = useState<JobPosting>({
-    title: currentPosting?.title || "",
-    department: currentPosting?.department || "",
-    location: currentPosting?.location || "",
-    description: currentPosting?.description || "",
-    qualifications: currentPosting?.qualifications || [""],
-    requirements: currentPosting?.requirements || [""],
-    benefits: currentPosting?.benefits || [""],
-    status: currentPosting?.status || "Open",
-    postedDate:
-      currentPosting?.postedDate || new Date().toISOString().split("T")[0],
+  const [qualifications, setQualifications] = useState<string[]>(
+    currentPosting?.qualifications || [""]
+  );
+  const [requirements, setRequirements] = useState<string[]>(
+    currentPosting?.requirements || [""]
+  );
+  const [benefits, setBenefits] = useState<string[]>(
+    currentPosting?.benefits || [""]
+  );
+
+  const formik = useFormik<JobPosting>({
+    initialValues: {
+      title: currentPosting?.title || "",
+      department: currentPosting?.department || "",
+      location: currentPosting?.location || "",
+      description: currentPosting?.description || "",
+      qualifications: currentPosting?.qualifications || [""],
+      requirements: currentPosting?.requirements || [""],
+      benefits: currentPosting?.benefits || [""],
+      status: currentPosting?.status || "Open",
+      postedDate:
+        currentPosting?.postedDate || new Date().toISOString().split("T")[0],
+      salaryMin: currentPosting?.salaryMin || "",
+      salaryMax: currentPosting?.salaryMax || "",
+      jobType: currentPosting?.jobType || "",
+      workLocationType: currentPosting?.workLocationType || "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string().required("Job Title is required"),
+      department: Yup.string().required("Department is required"),
+      location: Yup.string().required("Location is required"),
+      description: Yup.string().required("Description is required"),
+      qualifications: Yup.array().of(
+        Yup.string().required("Qualification is required")
+      ),
+      requirements: Yup.array().of(
+        Yup.string().required("Requirement is required")
+      ),
+      benefits: Yup.array().of(Yup.string().required("Benefit is required")),
+      status: Yup.string().required("Status is required"),
+      salaryMin: Yup.number()
+        .min(0, "Salary must be positive")
+        .required("Minimum salary is required"),
+      salaryMax: Yup.number()
+        .min(
+          Yup.ref("salaryMin"),
+          "Maximum salary must be greater than minimum salary"
+        )
+        .required("Maximum salary is required"),
+      jobType: Yup.string().required("Job type is required"),
+      workLocationType: Yup.string().required("Work location type is required"),
+    }),
+    onSubmit: (values) => {
+      const newPosting: JobPosting = {
+        ...values,
+        id: currentPosting?.id || Date.now(),
+        qualifications: qualifications.filter((q) => q.trim() !== ""),
+        requirements: requirements.filter((r) => r.trim() !== ""),
+        benefits: benefits.filter((b) => b.trim() !== ""),
+      };
+      onSave(newPosting);
+    },
   });
-
-  const [errors, setErrors] = useState<any>({});
-
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
 
   const handleAddField = (
     field: "qualifications" | "requirements" | "benefits"
   ) => {
-    setFormValues({
-      ...formValues,
-      [field]: [...formValues[field], ""],
-    });
+    if (field === "qualifications") {
+      setQualifications([...qualifications, ""]);
+    } else if (field === "requirements") {
+      setRequirements([...requirements, ""]);
+    } else {
+      setBenefits([...benefits, ""]);
+    }
   };
 
   const handleRemoveField = (
     field: "qualifications" | "requirements" | "benefits",
     index: number
   ) => {
-    const updatedValues = formValues[field].filter((_, i) => i !== index);
-    setFormValues({
-      ...formValues,
-      [field]: updatedValues,
-    });
+    if (field === "qualifications") {
+      setQualifications(qualifications.filter((_, i) => i !== index));
+    } else if (field === "requirements") {
+      setRequirements(requirements.filter((_, i) => i !== index));
+    } else {
+      setBenefits(benefits.filter((_, i) => i !== index));
+    }
   };
 
-  const handleDynamicFieldChange = (
+  const handleFieldChange = (
     field: "qualifications" | "requirements" | "benefits",
     index: number,
     value: string
   ) => {
-    const updatedValues = [...formValues[field]];
-    updatedValues[index] = value;
-    setFormValues({
-      ...formValues,
-      [field]: updatedValues,
-    });
-  };
-
-  const validateForm = async () => {
-    try {
-      await validationSchema.validate(formValues, { abortEarly: false });
-      return true;
-    } catch (error) {
-      if (error instanceof Yup.ValidationError) {
-        const formErrors: any = {};
-        error.inner.forEach((err) => {
-          if (err.path) formErrors[err.path] = err.message;
-        });
-        setErrors(formErrors);
-      }
-      return false;
+    if (field === "qualifications") {
+      const newQualifications = [...qualifications];
+      newQualifications[index] = value;
+      setQualifications(newQualifications);
+    } else if (field === "requirements") {
+      const newRequirements = [...requirements];
+      newRequirements[index] = value;
+      setRequirements(newRequirements);
+    } else {
+      const newBenefits = [...benefits];
+      newBenefits[index] = value;
+      setBenefits(newBenefits);
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const isValid = await validateForm();
-    if (!isValid) return;
-
-    setIsLoading(true);
-    console.log(formValues);
-
-    onSave({
-      ...formValues,
-      id: currentPosting?.id || Date.now(),
-    });
-    setIsLoading(false);
-    handleClose();
   };
 
   const renderDynamicFields = (
@@ -171,7 +188,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
     <>
       {show && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-bold mb-4">
               {currentPosting ? "Edit Job Posting" : "Add New Job Posting"}
             </h3>
@@ -207,24 +224,90 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 label="Description"
                 id="description"
                 name="description"
-                value={formValues.description}
-                onChange={handleInputChange}
-                rows={4}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
-                error={errors.description}
+                error={formik.touched.description && formik.errors.description}
+              />
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Salary Range
+                </label>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1">
+                    <InputField
+                      label="Min"
+                      type="number"
+                      id="salaryMin"
+                      name="salaryMin"
+                      value={formik.values.salaryMin}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      required
+                      error={
+                        formik.touched.salaryMin && formik.errors.salaryMin
+                      }
+                    />
+                  </div>
+                  <span className="self-center">to</span>
+                  <div className="flex-1">
+                    <InputField
+                      label="Max"
+                      type="number"
+                      id="salaryMax"
+                      name="salaryMax"
+                      value={formik.values.salaryMax}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      required
+                      error={
+                        formik.touched.salaryMax && formik.errors.salaryMax
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <SelectField
+                label="Job Type"
+                id="jobType"
+                name="jobType"
+                value={formik.values.jobType}
+                options={["Full-time", "Part-time", "Internship"]}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                required
+                error={formik.touched.jobType && formik.errors.jobType}
+              />
+
+              <SelectField
+                label="Work Location Type"
+                id="workLocationType"
+                name="workLocationType"
+                value={formik.values.workLocationType}
+                options={["Onsite", "Remote", "Hybrid"]}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                required
+                error={
+                  formik.touched.workLocationType &&
+                  formik.errors.workLocationType
+                }
               />
 
               {renderDynamicFields(
                 "qualifications",
-                formValues.qualifications,
+                qualifications,
                 "Qualifications"
               )}
               {renderDynamicFields(
                 "requirements",
-                formValues.requirements,
+                requirements,
                 "Requirements"
               )}
-              {renderDynamicFields("benefits", formValues.benefits, "Benefits")}
+              {renderDynamicFields("benefits", benefits, "Benefits")}
 
               <SelectField
                 label="Status"
