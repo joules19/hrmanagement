@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CareersHero from "../../components/ui/sections/CareersHero";
 
 interface Job {
@@ -41,6 +35,7 @@ const jobListings: Job[] = [
 ];
 
 const JobListings: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="bg-primary- min-h-screen flex flex-col  items-center px-4 md:px-8 lg:px-16 py-12">
       <CareersHero />
@@ -57,21 +52,20 @@ const JobListings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobListings.map((job) => (
             <div
+              onClick={() => navigate(`/job-listing/${job.id}`)}
               key={job.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
             >
-              <Link to={`/job-listing/${job.id}`}>
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  {job.title}
-                </h2>
-                <p className="text-gray-700">
-                  {job.company} - {job.location}
-                </p>
-                <p className="text-gray-600 mt-4">{job.description}</p>
-                <button className="mt-4 inline-block px-4 py-2 bg-primary text-white font-semibold rounded-lg">
-                  View Details
-                </button>
-              </Link>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                {job.title}
+              </h2>
+              <p className="text-gray-700">
+                {job.company} - {job.location}
+              </p>
+              <p className="text-gray-600 mt-4">{job.description}</p>
+              <button className="mt-4 inline-block px-4 py-2 bg-primary text-white font-semibold rounded-lg">
+                View Details
+              </button>
             </div>
           ))}
         </div>

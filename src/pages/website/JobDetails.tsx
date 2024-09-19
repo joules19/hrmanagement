@@ -15,6 +15,8 @@ import {
   Upload,
   message,
   Tooltip,
+  DatePicker,
+  Select,
   Alert,
 } from "antd";
 import {
@@ -22,12 +24,16 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaCheckCircle,
+  FaRobot,
 } from "react-icons/fa";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import AppSpinner from "../../components/ui/Spinner";
+import moment from "moment";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 
 const { Title, Text, Paragraph } = Typography;
+const { Option } = Select;
 
 const job = {
   title: "Senior Software Engineer",
@@ -65,6 +71,7 @@ const JobDetails: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [isParsingCv, setIsParsingCv] = useState(false);
+  const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
 
   // Handle the modal visibility
   const showModal = () => {
@@ -111,6 +118,29 @@ const JobDetails: React.FC = () => {
     }
 
     return false; // Prevent automatic upload by Ant Design Upload component
+  };
+
+  // Handle AI-based cover letter generation
+  const generateCoverLetter = async () => {
+    setIsGeneratingCoverLetter(true);
+    try {
+      const response = await axios.get(
+        "https://api.example.com/generate-cover-letter"
+      ); // Replace with your API endpoint for AI cover letter generation
+
+      const { coverLetter } = response.data;
+
+      // Prefill the cover letter field
+      form.setFieldsValue({
+        coverLetter,
+      });
+
+      setIsGeneratingCoverLetter(false);
+      message.success("AI-generated cover letter loaded successfully!");
+    } catch (error) {
+      setIsGeneratingCoverLetter(false);
+      message.error("Failed to generate cover letter.");
+    }
   };
 
   const handleSubmit = (values: any) => {
@@ -265,7 +295,6 @@ const JobDetails: React.FC = () => {
           <Alert
             message="Upload a resume to pre-fill the form fields."
             type="info"
-            // showIcon
             style={{
               marginBottom: "16px",
               backgroundColor: "#F0F8FF",
@@ -310,6 +339,42 @@ const JobDetails: React.FC = () => {
             <Input placeholder="Enter your address" />
           </Form.Item>
 
+          {/* Date of Birth Field */}
+          <Form.Item
+            label="Date of Birth"
+            name="dob"
+            rules={[
+              { required: true, message: "Please input your date of birth!" },
+            ]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              style={{ width: "100%" }}
+              placeholder="Select your date of birth"
+              disabledDate={(current) =>
+                current && current > moment().endOf("day")
+              }
+            />
+          </Form.Item>
+
+          {/* Highest Qualification Field */}
+          <Form.Item
+            label="Highest Qualification"
+            name="highestQualification"
+            rules={[
+              {
+                required: true,
+                message: "Please select your highest qualification!",
+              },
+            ]}
+          >
+            <Select placeholder="Select your highest qualification">
+              <Option value="bachelors">Bachelors</Option>
+              <Option value="masters">Masters</Option>
+              <Option value="phd">PhD</Option>
+            </Select>
+          </Form.Item>
+
           {/* Additional Fields */}
           <Form.Item
             label="Years of Experience"
@@ -324,9 +389,34 @@ const JobDetails: React.FC = () => {
             <Input placeholder="Enter your years of experience" />
           </Form.Item>
 
-          <Form.Item label="Cover Letter" name="coverLetter">
-            <Input.TextArea rows={4} placeholder="Write a cover letter" />
-          </Form.Item>
+          {/* Cover Letter Field with AI Suggestion */}
+          <Row gutter={8}>
+            <Col span={22}>
+              <Form.Item label="Cover Letter" name="coverLetter">
+                <Input.TextArea rows={4} placeholder="Write a cover letter" />
+              </Form.Item>
+            </Col>
+            <Col span={1}>
+              <Tooltip title="Generate cover letter using AI">
+                <Button
+                  icon={
+                    <SparklesIcon className="w-[18px] h-[18px] text-primary-1" />
+                  }
+                  loading={isGeneratingCoverLetter}
+                  onClick={generateCoverLetter}
+                  type="text" // Removes default border and background
+                  style={{
+                    height: "100%",
+                    border: "none", // Remove any border
+                    boxShadow: "none", // Remove any shadow or outline
+                    backgroundColor: "transparent", // Ensure background stays transparent
+                  }}
+                  // Remove hover effects
+                  className="no-hover"
+                />
+              </Tooltip>
+            </Col>
+          </Row>
 
           <Button
             type="primary"
