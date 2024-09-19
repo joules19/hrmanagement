@@ -52,3 +52,9 @@ select {
   transition: border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   content: "";
 }
+
+.custom-input:focus {
+  outline: none; /* Remove default outline */
+  border-color: #36a2eb; /* Change border color on focus */
+  box-shadow: 0 0 0 2px rgba(54, 162, 235, 0.3); /* Optional shadow for focus effect */
+}

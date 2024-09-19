@@ -36,12 +36,7 @@ export const Button: FC<ButtonProps> = ({
   const outlineBtnBg = `flex flex-1 justify-center items-center gap-2 rounded-[5px] w-full h-full border-2 border-primary-1 bg-transparent text-${hoverColor} text-sm hover:bg-${hoverColor} hover:border-[0px] hover:text-white disabled:cursor-not-allowed cursor-pointer`;
   if (mode === "outline") {
     return (
-      <button
-        type="submit"
-        disabled={loading}
-        className={outlineBtnBg}
-        {...props}
-      >
+      <button disabled={loading} className={outlineBtnBg} {...props}>
         {loading ? <Spinner /> : buttonText}
         {imageIcon !== undefined && (
           <img
@@ -55,7 +50,12 @@ export const Button: FC<ButtonProps> = ({
   }
   if (mode === "solid") {
     return (
-      <button disabled={loading} className={solidBtnBg} {...props}>
+      <button
+        type="submit"
+        disabled={loading}
+        className={solidBtnBg}
+        {...props}
+      >
         {imageIcon !== undefined && <div className="mr-2">{imageIcon}</div>}
         {loading ? <Spinner /> : buttonText}
       </button>

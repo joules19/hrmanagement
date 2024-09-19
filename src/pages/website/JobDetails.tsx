@@ -285,6 +285,12 @@ const JobDetails: React.FC = () => {
                 beforeUpload={handleResumeUpload}
                 maxCount={1}
                 accept=".pdf,.doc,.docx"
+                style={{
+                  borderColor: "none",
+                  outline: "none",
+                  boxShadow: "none",
+                }}
+                className="custom-input text-primary-1"
               >
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
               </Upload>
@@ -310,7 +316,15 @@ const JobDetails: React.FC = () => {
               { required: true, message: "Please input your full name!" },
             ]}
           >
-            <Input placeholder="Enter your full name" />
+            <Input
+              placeholder="Enter your full name"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            />
           </Form.Item>
 
           <Form.Item
@@ -318,7 +332,15 @@ const JobDetails: React.FC = () => {
             name="email"
             rules={[{ required: true, message: "Please input your email!" }]}
           >
-            <Input placeholder="Enter your email" />
+            <Input
+              placeholder="Enter your email"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            />
           </Form.Item>
 
           <Form.Item
@@ -328,7 +350,15 @@ const JobDetails: React.FC = () => {
               { required: true, message: "Please input your phone number!" },
             ]}
           >
-            <Input placeholder="Enter your phone number" />
+            <Input
+              placeholder="Enter your phone number"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            />
           </Form.Item>
 
           <Form.Item
@@ -336,7 +366,15 @@ const JobDetails: React.FC = () => {
             name="address"
             rules={[{ required: true, message: "Please input your address!" }]}
           >
-            <Input placeholder="Enter your address" />
+            <Input
+              placeholder="Enter your address"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            />
           </Form.Item>
 
           {/* Date of Birth Field */}
@@ -348,8 +386,14 @@ const JobDetails: React.FC = () => {
             ]}
           >
             <DatePicker
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+                width: "100%",
+              }}
+              className="custom-input"
               format="DD/MM/YYYY"
-              style={{ width: "100%" }}
               placeholder="Select your date of birth"
               disabledDate={(current) =>
                 current && current > moment().endOf("day")
@@ -368,7 +412,15 @@ const JobDetails: React.FC = () => {
               },
             ]}
           >
-            <Select placeholder="Select your highest qualification">
+            <Select
+              placeholder="Select your highest qualification"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            >
               <Option value="bachelors">Bachelors</Option>
               <Option value="masters">Masters</Option>
               <Option value="phd">PhD</Option>
@@ -386,14 +438,31 @@ const JobDetails: React.FC = () => {
               },
             ]}
           >
-            <Input placeholder="Enter your years of experience" />
+            <Input
+              placeholder="Enter your years of experience"
+              style={{
+                borderColor: "none",
+                outline: "none",
+                boxShadow: "none",
+              }}
+              className="custom-input"
+            />
           </Form.Item>
 
           {/* Cover Letter Field with AI Suggestion */}
           <Row gutter={8}>
             <Col span={22}>
               <Form.Item label="Cover Letter" name="coverLetter">
-                <Input.TextArea rows={4} placeholder="Write a cover letter" />
+                <Input.TextArea
+                  rows={5}
+                  placeholder="Write a cover letter"
+                  style={{
+                    borderColor: "none",
+                    outline: "none",
+                    boxShadow: "none",
+                  }}
+                  className="custom-input"
+                />
               </Form.Item>
             </Col>
             <Col span={1}>
@@ -412,7 +481,7 @@ const JobDetails: React.FC = () => {
                     backgroundColor: "transparent", // Ensure background stays transparent
                   }}
                   // Remove hover effects
-                  className="no-hover"
+                  className="no-hover custom-input"
                 />
               </Tooltip>
             </Col>

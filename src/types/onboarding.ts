@@ -6,6 +6,8 @@ export interface JobPosting {
   description: string;
   qualifications: string[];
   requirements: string[];
+  benefits: string[];
+
   status: "Open" | "Closed" | "On Hold";
   postedDate: string;
 }

@@ -43,7 +43,7 @@ export default function WebsiteLayout() {
             className="text-xl font-semibold cursor-pointer"
             style={{ margin: 0, color: "#fff" }}
           >
-            HR Place
+            HR Management
           </h1>
         </div>
 

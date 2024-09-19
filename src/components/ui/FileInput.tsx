@@ -36,7 +36,7 @@ const FileInput: React.FC<FileInputProps> = ({
         onBlur={onBlur}
         className={`block w-full border-[.8px] ${
           error ? "border-red-500" : "border-gray-300"
-        } rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500`}
+        } rounded-md py-2 px-3 shadow-sm flex-grow mr-2 p-2 border-[.8px] border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-1`}
       />
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>

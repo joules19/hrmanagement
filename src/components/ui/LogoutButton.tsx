@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, notification, Popconfirm } from "antd";
+import { Button, message, notification, Popconfirm } from "antd";
 import { PoweroffOutlined } from "@ant-design/icons";
 import { clearSession } from "../../utils/sessionManager";
 import { useNavigate } from "react-router-dom";
@@ -15,10 +15,7 @@ const LogoutButton: React.FC = () => {
 
     // Redirect to login page
     navigate("/");
-    notification.success({
-      message: "Logged Out",
-      description: "You have successfully logged out.",
-    });
+    message.success("You have successfully logged out");
   };
 
   const confirmLogout = (): void => {

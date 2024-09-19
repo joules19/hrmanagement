@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { createSession } from "../../utils/sessionManager";
-import { notification } from "antd";
+import { message, notification } from "antd";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/ui/Button";
 import { Radio } from "antd";
@@ -62,10 +62,11 @@ const Login: React.FC = () => {
             setIsLoading(false);
 
             // Show success notification
-            notification.success({
-              message: "Login Successful",
-              description: "You have been successfully logged in.",
-            });
+            // notification.success({
+            //   message: "Login Successful",
+            //   description: "You have been successfully logged in.",
+            // });
+            message.success("You have been successfully logged in");
 
             // Redirect to dashboard
             navigate("/dashboard");
@@ -75,10 +76,11 @@ const Login: React.FC = () => {
         setIsLoading(false);
 
         // Show error notification
-        notification.error({
-          message: "Login Failed",
-          description: "Invalid email or password.",
-        });
+        // notification.error({
+        //   message: "Login Failed",
+        //   description: "Invalid email or password.",
+        // });
+        message.error("Invalid email or password");
       }
     },
   });
@@ -131,7 +133,7 @@ const Login: React.FC = () => {
               />
               <span
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                className="h-full absolute inset-y-0 right-0 flex items-center pr-3 mt-[14px] cursor-pointer"
+                className="h-full absolute inset-y-0 right-0 flex items-center pr-3 mt-[5px] cursor-pointer"
               >
                 {passwordVisible && (
                   <EyeSlashIcon className="text-gray-500 w-5 h-5" />

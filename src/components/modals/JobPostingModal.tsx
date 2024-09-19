@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
 import { Button } from "../ui/Button";
 import { JobPosting } from "../../types/onboarding";
 import TextAreaField from "../ui/TextAreaField";
-import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface JobPostingModalProps {
   show: boolean;
@@ -16,6 +14,14 @@ interface JobPostingModalProps {
   onSave: (posting: JobPosting) => void;
 }
 
+const validationSchema = Yup.object({
+  title: Yup.string().required("Job Title is required"),
+  department: Yup.string().required("Department is required"),
+  location: Yup.string().required("Location is required"),
+  description: Yup.string().required("Description is required"),
+  status: Yup.string().required("Status is required"),
+});
+
 const JobPostingModal: React.FC<JobPostingModalProps> = ({
   show,
   handleClose,
@@ -23,70 +29,103 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   onSave,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [qualifications, setQualifications] = useState<string[]>(currentPosting?.qualifications || [""]);
-  const [requirements, setRequirements] = useState<string[]>(currentPosting?.requirements || [""]);
-
-  const formik = useFormik<JobPosting>({
-    initialValues: {
-      title: currentPosting?.title || "",
-      department: currentPosting?.department || "",
-      location: currentPosting?.location || "",
-      description: currentPosting?.description || "",
-      qualifications: currentPosting?.qualifications || [""],
-      requirements: currentPosting?.requirements || [""],
-      status: currentPosting?.status || "Open",
-      postedDate:
-        currentPosting?.postedDate || new Date().toISOString().split("T")[0],
-    },
-    validationSchema: Yup.object({
-      title: Yup.string().required("Job Title is required"),
-      department: Yup.string().required("Department is required"),
-      location: Yup.string().required("Location is required"),
-      description: Yup.string().required("Description is required"),
-      qualifications: Yup.array().of(Yup.string().required("Qualification is required")),
-      requirements: Yup.array().of(Yup.string().required("Requirement is required")),
-      status: Yup.string().required("Status is required"),
-    }),
-    onSubmit: (values) => {
-      const newPosting: JobPosting = {
-        ...values,
-        id: currentPosting?.id || Date.now(),
-        qualifications: qualifications.filter(q => q.trim() !== ""),
-        requirements: requirements.filter(r => r.trim() !== ""),
-      };
-      onSave(newPosting);
-    },
+  const [formValues, setFormValues] = useState<JobPosting>({
+    title: currentPosting?.title || "",
+    department: currentPosting?.department || "",
+    location: currentPosting?.location || "",
+    description: currentPosting?.description || "",
+    qualifications: currentPosting?.qualifications || [""],
+    requirements: currentPosting?.requirements || [""],
+    benefits: currentPosting?.benefits || [""],
+    status: currentPosting?.status || "Open",
+    postedDate:
+      currentPosting?.postedDate || new Date().toISOString().split("T")[0],
   });
 
-  const handleAddField = (field: 'qualifications' | 'requirements') => {
-    if (field === 'qualifications') {
-      setQualifications([...qualifications, ""]);
-    } else {
-      setRequirements([...requirements, ""]);
+  const [errors, setErrors] = useState<any>({});
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  const handleAddField = (
+    field: "qualifications" | "requirements" | "benefits"
+  ) => {
+    setFormValues({
+      ...formValues,
+      [field]: [...formValues[field], ""],
+    });
+  };
+
+  const handleRemoveField = (
+    field: "qualifications" | "requirements" | "benefits",
+    index: number
+  ) => {
+    const updatedValues = formValues[field].filter((_, i) => i !== index);
+    setFormValues({
+      ...formValues,
+      [field]: updatedValues,
+    });
+  };
+
+  const handleDynamicFieldChange = (
+    field: "qualifications" | "requirements" | "benefits",
+    index: number,
+    value: string
+  ) => {
+    const updatedValues = [...formValues[field]];
+    updatedValues[index] = value;
+    setFormValues({
+      ...formValues,
+      [field]: updatedValues,
+    });
+  };
+
+  const validateForm = async () => {
+    try {
+      await validationSchema.validate(formValues, { abortEarly: false });
+      return true;
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        const formErrors: any = {};
+        error.inner.forEach((err) => {
+          if (err.path) formErrors[err.path] = err.message;
+        });
+        setErrors(formErrors);
+      }
+      return false;
     }
   };
 
-  const handleRemoveField = (field: 'qualifications' | 'requirements', index: number) => {
-    if (field === 'qualifications') {
-      setQualifications(qualifications.filter((_, i) => i !== index));
-    } else {
-      setRequirements(requirements.filter((_, i) => i !== index));
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isValid = await validateForm();
+    if (!isValid) return;
+
+    setIsLoading(true);
+    console.log(formValues);
+
+    onSave({
+      ...formValues,
+      id: currentPosting?.id || Date.now(),
+    });
+    setIsLoading(false);
+    handleClose();
   };
 
-  const handleFieldChange = (field: 'qualifications' | 'requirements', index: number, value: string) => {
-    if (field === 'qualifications') {
-      const newQualifications = [...qualifications];
-      newQualifications[index] = value;
-      setQualifications(newQualifications);
-    } else {
-      const newRequirements = [...requirements];
-      newRequirements[index] = value;
-      setRequirements(newRequirements);
-    }
-  };
-
-  const renderDynamicFields = (field: 'qualifications' | 'requirements', values: string[], label: string) => (
+  const renderDynamicFields = (
+    field: "qualifications" | "requirements" | "benefits",
+    values: string[],
+    label: string
+  ) => (
     <div className="mb-4">
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}
@@ -95,20 +134,28 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
         <div key={index} className="flex items-center mb-2">
           <input
             type="text"
-            id={`${field}-${index}`}
             name={`${field}-${index}`}
             value={value}
-            onChange={(e) => handleFieldChange(field, index, e.target.value)}
-            className="flex-grow mr-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
+            onChange={(e) =>
+              handleDynamicFieldChange(field, index, e.target.value)
+            }
+            className="flex-grow mr-2 p-2 border-[.8px] border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-1"
           />
-
-          <button onClick={() => handleAddField(field)} className="text-green-500 py-1 px-2 rounded">
+          {errors[`${field}[${index}]`] && (
+            <div className="text-red-500 text-sm">
+              {errors[`${field}[${index}]`]}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => handleAddField(field)}
+            className="text-green-500 py-1 px-2 rounded"
+          >
             <PlusCircleIcon className="w-4 h-4" />
           </button>
-
           {values.length > 1 && (
             <button
+              type="button"
               onClick={() => handleRemoveField(field, index)}
               className="text-red-500 py-1 px-2 rounded"
             >
@@ -124,66 +171,72 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
     <>
       {show && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto">
             <h3 className="text-xl font-bold mb-4">
               {currentPosting ? "Edit Job Posting" : "Add New Job Posting"}
             </h3>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <InputField
                 label="Job Title"
                 id="title"
                 name="title"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                value={formValues.title}
+                onChange={handleInputChange}
                 required
-                error={formik.touched.title && formik.errors.title}
+                error={errors.title}
               />
               <InputField
                 label="Department"
                 id="department"
                 name="department"
-                value={formik.values.department}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                value={formValues.department}
+                onChange={handleInputChange}
                 required
-                error={formik.touched.department && formik.errors.department}
+                error={errors.department}
               />
               <InputField
                 label="Location"
                 id="location"
                 name="location"
-                value={formik.values.location}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                value={formValues.location}
+                onChange={handleInputChange}
                 required
-                error={formik.touched.location && formik.errors.location}
+                error={errors.location}
               />
               <TextAreaField
                 label="Description"
                 id="description"
                 name="description"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                value={formValues.description}
+                onChange={handleInputChange}
+                rows={4}
                 required
-                error={formik.touched.description && formik.errors.description}
+                error={errors.description}
               />
 
-              {renderDynamicFields('qualifications', qualifications, 'Qualifications')}
-              {renderDynamicFields('requirements', requirements, 'Requirements')}
+              {renderDynamicFields(
+                "qualifications",
+                formValues.qualifications,
+                "Qualifications"
+              )}
+              {renderDynamicFields(
+                "requirements",
+                formValues.requirements,
+                "Requirements"
+              )}
+              {renderDynamicFields("benefits", formValues.benefits, "Benefits")}
 
               <SelectField
                 label="Status"
                 id="status"
                 name="status"
-                value={formik.values.status}
+                value={formValues.status}
                 options={["Open", "Closed", "On Hold"]}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                onChange={handleInputChange}
                 required
-                error={formik.touched.status && formik.errors.status}
+                error={errors.status}
               />
+
               <div className="flex justify-end space-x-2 mt-4">
                 <div className="flex gap-2 w-[308px] h-[38px]">
                   <div className="flex flex-1">
@@ -197,8 +250,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                   </div>
                   <div className="flex flex-1">
                     <Button
-                      type="submit"
-                      mode="solid"
+                      mode={"solid"}
                       buttonText="Save"
                       loading={isLoading}
                       defaultColor="primary-1"
