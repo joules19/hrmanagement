@@ -1,11 +1,31 @@
 import React, { useState } from "react";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
-import { Button } from "../ui/Button";
-import { JobPosting } from "../../types/onboarding";
 import TextAreaField from "../ui/TextAreaField";
-import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Button } from "../ui/Button";
+import {
+  MinusCircleIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+
+interface JobPosting {
+  title: string;
+  department: string;
+  location: string;
+  description: string;
+  qualifications: string[];
+  requirements: string[];
+  benefits: string[];
+  status: string;
+  postedDate: string;
+  salaryMin: string;
+  salaryMax: string;
+  jobType: string;
+  workLocationType: string;
+}
 
 interface JobPostingModalProps {
   show: boolean;
@@ -14,14 +34,6 @@ interface JobPostingModalProps {
   onSave: (posting: JobPosting) => void;
 }
 
-const validationSchema = Yup.object({
-  title: Yup.string().required("Job Title is required"),
-  department: Yup.string().required("Department is required"),
-  location: Yup.string().required("Location is required"),
-  description: Yup.string().required("Description is required"),
-  status: Yup.string().required("Status is required"),
-});
-
 const JobPostingModal: React.FC<JobPostingModalProps> = ({
   show,
   handleClose,
@@ -29,16 +41,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   onSave,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [qualifications, setQualifications] = useState<string[]>(
-    currentPosting?.qualifications || [""]
-  );
-  const [requirements, setRequirements] = useState<string[]>(
-    currentPosting?.requirements || [""]
-  );
-  const [benefits, setBenefits] = useState<string[]>(
-    currentPosting?.benefits || [""]
-  );
 
+  // Formik setup
   const formik = useFormik<JobPosting>({
     initialValues: {
       title: currentPosting?.title || "",
@@ -61,13 +65,15 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
       department: Yup.string().required("Department is required"),
       location: Yup.string().required("Location is required"),
       description: Yup.string().required("Description is required"),
-      qualifications: Yup.array().of(
-        Yup.string().required("Qualification is required")
-      ),
-      requirements: Yup.array().of(
-        Yup.string().required("Requirement is required")
-      ),
-      benefits: Yup.array().of(Yup.string().required("Benefit is required")),
+      qualifications: Yup.array()
+        .of(Yup.string().required("Qualification is required"))
+        .min(1, "At least one qualification is required"),
+      requirements: Yup.array()
+        .of(Yup.string().required("Requirement is required"))
+        .min(1, "At least one requirement is required"),
+      benefits: Yup.array()
+        .of(Yup.string().required("Benefit is required"))
+        .min(1, "At least one benefit is required"),
       status: Yup.string().required("Status is required"),
       salaryMin: Yup.number()
         .min(0, "Salary must be positive")
@@ -84,58 +90,28 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
     onSubmit: (values) => {
       const newPosting: JobPosting = {
         ...values,
-        id: currentPosting?.id || Date.now(),
-        qualifications: qualifications.filter((q) => q.trim() !== ""),
-        requirements: requirements.filter((r) => r.trim() !== ""),
-        benefits: benefits.filter((b) => b.trim() !== ""),
+        qualifications: values.qualifications.filter((q) => q.trim() !== ""),
+        requirements: values.requirements.filter((r) => r.trim() !== ""),
+        benefits: values.benefits.filter((b) => b.trim() !== ""),
       };
-      onSave(newPosting);
+      console.log(newPosting);
+
+      //onSave(newPosting);
     },
   });
 
   const handleAddField = (
     field: "qualifications" | "requirements" | "benefits"
   ) => {
-    if (field === "qualifications") {
-      setQualifications([...qualifications, ""]);
-    } else if (field === "requirements") {
-      setRequirements([...requirements, ""]);
-    } else {
-      setBenefits([...benefits, ""]);
-    }
+    formik.setFieldValue(field, [...formik.values[field], ""]);
   };
 
   const handleRemoveField = (
     field: "qualifications" | "requirements" | "benefits",
     index: number
   ) => {
-    if (field === "qualifications") {
-      setQualifications(qualifications.filter((_, i) => i !== index));
-    } else if (field === "requirements") {
-      setRequirements(requirements.filter((_, i) => i !== index));
-    } else {
-      setBenefits(benefits.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleFieldChange = (
-    field: "qualifications" | "requirements" | "benefits",
-    index: number,
-    value: string
-  ) => {
-    if (field === "qualifications") {
-      const newQualifications = [...qualifications];
-      newQualifications[index] = value;
-      setQualifications(newQualifications);
-    } else if (field === "requirements") {
-      const newRequirements = [...requirements];
-      newRequirements[index] = value;
-      setRequirements(newRequirements);
-    } else {
-      const newBenefits = [...benefits];
-      newBenefits[index] = value;
-      setBenefits(newBenefits);
-    }
+    const newFieldValues = formik.values[field].filter((_, i) => i !== index);
+    formik.setFieldValue(field, newFieldValues);
   };
 
   const renderDynamicFields = (
@@ -151,18 +127,14 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
         <div key={index} className="flex items-center mb-2">
           <input
             type="text"
-            name={`${field}-${index}`}
+            id={`${field}-${index}`}
+            name={`${field}[${index}]`}
             value={value}
-            onChange={(e) =>
-              handleDynamicFieldChange(field, index, e.target.value)
-            }
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="flex-grow mr-2 p-2 border-[.8px] border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-1"
+            required
           />
-          {errors[`${field}[${index}]`] && (
-            <div className="text-red-500 text-sm">
-              {errors[`${field}[${index}]`]}
-            </div>
-          )}
           <button
             type="button"
             onClick={() => handleAddField(field)}
@@ -181,6 +153,9 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
           )}
         </div>
       ))}
+      {formik.touched[field] && formik.errors[field] && (
+        <p className="mt-1 text-xs text-red-500">{formik.errors[field]}</p>
+      )}
     </div>
   );
 
@@ -192,33 +167,36 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
             <h3 className="text-xl font-bold mb-4">
               {currentPosting ? "Edit Job Posting" : "Add New Job Posting"}
             </h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <InputField
                 label="Job Title"
                 id="title"
                 name="title"
-                value={formValues.title}
-                onChange={handleInputChange}
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
-                error={errors.title}
+                error={formik.touched.title && formik.errors.title}
               />
               <InputField
                 label="Department"
                 id="department"
                 name="department"
-                value={formValues.department}
-                onChange={handleInputChange}
+                value={formik.values.department}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
-                error={errors.department}
+                error={formik.touched.department && formik.errors.department}
               />
               <InputField
                 label="Location"
                 id="location"
                 name="location"
-                value={formValues.location}
-                onChange={handleInputChange}
+                value={formik.values.location}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
-                error={errors.location}
+                error={formik.touched.location && formik.errors.location}
               />
               <TextAreaField
                 label="Description"
@@ -230,46 +208,33 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 required
                 error={formik.touched.description && formik.errors.description}
               />
-
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Salary Range
                 </label>
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1">
-                    <InputField
-                      label="Min"
-                      type="number"
-                      id="salaryMin"
-                      name="salaryMin"
-                      value={formik.values.salaryMin}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      required
-                      error={
-                        formik.touched.salaryMin && formik.errors.salaryMin
-                      }
-                    />
-                  </div>
-                  <span className="self-center">to</span>
-                  <div className="flex-1">
-                    <InputField
-                      label="Max"
-                      type="number"
-                      id="salaryMax"
-                      name="salaryMax"
-                      value={formik.values.salaryMax}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      required
-                      error={
-                        formik.touched.salaryMax && formik.errors.salaryMax
-                      }
-                    />
-                  </div>
+                <div className="flex space-x-2">
+                  <InputField
+                    id="salaryMin"
+                    name="salaryMin"
+                    value={formik.values.salaryMin}
+                    type="number"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    required
+                    error={formik.touched.salaryMin && formik.errors.salaryMin}
+                  />
+                  <InputField
+                    id="salaryMax"
+                    name="salaryMax"
+                    value={formik.values.salaryMax}
+                    type="number"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    required
+                    error={formik.touched.salaryMax && formik.errors.salaryMax}
+                  />
                 </div>
               </div>
-
               <SelectField
                 label="Job Type"
                 id="jobType"
@@ -281,7 +246,6 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 required
                 error={formik.touched.jobType && formik.errors.jobType}
               />
-
               <SelectField
                 label="Work Location Type"
                 id="workLocationType"
@@ -296,30 +260,43 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                   formik.errors.workLocationType
                 }
               />
-
               {renderDynamicFields(
                 "qualifications",
-                qualifications,
+                formik.values.qualifications,
                 "Qualifications"
               )}
               {renderDynamicFields(
                 "requirements",
-                requirements,
+                formik.values.requirements,
                 "Requirements"
               )}
-              {renderDynamicFields("benefits", benefits, "Benefits")}
-
+              {renderDynamicFields(
+                "benefits",
+                formik.values.benefits,
+                "Benefits"
+              )}
               <SelectField
                 label="Status"
                 id="status"
                 name="status"
-                value={formValues.status}
+                value={formik.values.status}
                 options={["Open", "Closed", "On Hold"]}
-                onChange={handleInputChange}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
-                error={errors.status}
+                error={formik.touched.status && formik.errors.status}
               />
-
+              {/* <InputField
+                label="Posted Date"
+                id="postedDate"
+                name="postedDate"
+                type="date"
+                value={formik.values.postedDate}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                required
+                error={formik.touched.postedDate && formik.errors.postedDate}
+              /> */}
               <div className="flex justify-end space-x-2 mt-4">
                 <div className="flex gap-2 w-[308px] h-[38px]">
                   <div className="flex flex-1">

@@ -31,6 +31,8 @@ import axios from "axios";
 import AppSpinner from "../../components/ui/Spinner";
 import moment from "moment";
 import { SparklesIcon } from "@heroicons/react/24/outline";
+import { analyzeResume } from "../../api/ai";
+import { AnalyzeResumeRequest } from "../../models/api-client/ai/Ai.Interface";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -71,6 +73,7 @@ const JobDetails: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [isParsingCv, setIsParsingCv] = useState(false);
+  const [resume, setResume] = useState<File>();
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
 
   // Handle the modal visibility
@@ -87,6 +90,7 @@ const JobDetails: React.FC = () => {
     setIsParsingCv(true);
     const formData = new FormData();
     formData.append("file", file);
+    setResume(file);
 
     try {
       // Send the resume to the backend
@@ -110,6 +114,12 @@ const JobDetails: React.FC = () => {
         address,
       });
 
+      const analyzeResumePayload: AnalyzeResumeRequest = {
+        resume: file,
+        keywords: job.qualifications,
+      };
+      await analyzeResume(analyzeResumePayload);
+
       setIsParsingCv(false);
       message.success("Resume uploaded and form prefills loaded successfully!");
     } catch (error) {
@@ -120,15 +130,31 @@ const JobDetails: React.FC = () => {
     return false; // Prevent automatic upload by Ant Design Upload component
   };
 
+  const analyzeCV = async () => {};
+
   // Handle AI-based cover letter generation
   const generateCoverLetter = async () => {
+    if (!resume) {
+      message.error("Resume not attached.");
+      return;
+    }
     setIsGeneratingCoverLetter(true);
+    const formData = new FormData();
+    formData.append("file", resume!);
+
     try {
-      const response = await axios.get(
-        "https://api.example.com/generate-cover-letter"
+      const response = await axios.post(
+        "https://odoobros.pythonanywhere.com/api/generate-cv/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       ); // Replace with your API endpoint for AI cover letter generation
 
-      const { coverLetter } = response.data;
+      const coverLetter = response.data;
+      console.log(response.data);
 
       // Prefill the cover letter field
       form.setFieldsValue({

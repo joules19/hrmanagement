@@ -15,7 +15,7 @@ export default function WebsiteLayout() {
     if (session) {
       setUserDetails(session);
     }
-  }, [navigate, session]);
+  }, [navigate]);
 
   const handleMenuClick = (e: any) => {
     setCurrent(e.key);

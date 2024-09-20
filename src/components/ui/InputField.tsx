@@ -4,6 +4,7 @@ import React from "react";
 interface InputFieldProps {
   label?: string;
   id: string;
+  placeholder?: string;
   name: string;
   type?: string;
   value: string;
@@ -16,6 +17,7 @@ interface InputFieldProps {
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
+  placeholder,
   id,
   name,
   type = "text",
@@ -32,6 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
         {label}
       </label>
       <input
+        placeholder={placeholder}
         type={type}
         id={id}
         name={name}

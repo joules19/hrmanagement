@@ -36,6 +36,8 @@ const JobPosting: React.FC = () => {
   };
 
   const handleSavePosting = (newPosting: JobPostingModel) => {
+    console.log(987);
+
     if (currentPosting) {
       setJobPostings(
         jobPostings.map((posting) =>
