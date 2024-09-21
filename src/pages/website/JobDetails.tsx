@@ -146,7 +146,7 @@ const JobDetails: React.FC = () => {
       });
 
       setIsGeneratingCoverLetter(false);
-      message.success("AI-generated cover letter loaded successfully!");
+      message.success("Cover letter generated successfully!");
     } catch (error) {
       setIsGeneratingCoverLetter(false);
       message.error("Failed to generate cover letter.");
@@ -490,6 +490,15 @@ const JobDetails: React.FC = () => {
           </Form.Item>
 
           {/* Cover Letter Field with AI Suggestion */}
+          <Alert
+            message="Use our AI tool to generate a 150 word Cover Letter crafted carefully from your resume."
+            type="info"
+            style={{
+              marginBottom: "8px",
+              backgroundColor: "#F0F8FF",
+              color: "#36A2EB",
+            }}
+          />
           <Row gutter={8}>
             <Col span={22}>
               <Form.Item label="Cover Letter" name="coverLetter">
@@ -529,12 +538,11 @@ const JobDetails: React.FC = () => {
 
           <div className="w-full h-[38px] mb-4">  <Button
             mode={"solid"}
-            buttonText="Save"
+            buttonText="Submit Application"
             loading={isLoading}
             defaultColor="primary-1"
             hoverColor="primary-2"
           >
-            Submit Application
           </Button></div>
 
         </Form>
