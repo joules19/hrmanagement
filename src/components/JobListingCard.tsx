@@ -12,7 +12,8 @@ const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) 
   return (
     <Card
       title={jobPosting.jobTitle}
-      extra={<a href="#" onClick={onClick}>View Applicants</a>}
+      extra={<a href="#" className=" text-xs font-medium text-primary-1 hover:text-primary-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
+        onClick={onClick}>View Applicants</a>}
       style={{ width: 300, margin: '10px' }}
       hoverable
     >

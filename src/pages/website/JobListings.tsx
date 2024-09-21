@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CareersHero from "../../components/ui/sections/CareersHero";
 import { useAllPostedJobsMutation } from "../../store/services/recruitmentApi";
 import { JobPosting } from "../../types/onboarding";
+import { Tag } from "antd"
 
 const JobListings: React.FC = () => {
   const navigate = useNavigate();
@@ -43,13 +44,17 @@ const JobListings: React.FC = () => {
                 key={job.jobID}
                 className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
               >
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  {job.jobTitle}
-                </h2>
-                <p className="text-gray-700">
-                  {job.companyAddress}
-                </p>
-                <p className="text-gray-600 mt-4">{job.description.substring(0, 100)}</p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">{job.jobTitle}</h2>
+                <div className="flex  justify-between items-center">
+                  <p className="text-gray-700">{job.companyAddress}</p>
+
+                  {/* Work mode tag (rounded Ant Design Tag) */}
+                  <Tag className="" color="blue" style={{ borderRadius: '9999px' }}>
+                    {job.workMode}
+                  </Tag>
+                </div>
+
+                <p className="text-gray-600 mt-4">{`${job.description.substring(0, 120)} ...`}</p>
                 <button className="mt-4 inline-block px-4 py-2 bg-primary text-white font-semibold rounded-lg">
                   View Details
                 </button>
