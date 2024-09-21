@@ -12,13 +12,6 @@ const JobPosting: React.FC = () => {
     null
   );
 
-  useEffect(() => {
-    // Fetch job postings from API or load from local storage
-    const savedPostings = localStorage.getItem("jobPostings");
-    if (savedPostings) {
-      setJobPostings(JSON.parse(savedPostings));
-    }
-  }, []);
 
   useEffect(() => {
     // Save job postings to local storage whenever it changes
@@ -36,12 +29,11 @@ const JobPosting: React.FC = () => {
   };
 
   const handleSavePosting = (newPosting: JobPostingModel) => {
-    console.log(987);
 
     if (currentPosting) {
       setJobPostings(
         jobPostings.map((posting) =>
-          posting.id === currentPosting.id ? newPosting : posting
+          posting.jobID === currentPosting.jobID ? newPosting : posting
         )
       );
     } else {
@@ -51,7 +43,7 @@ const JobPosting: React.FC = () => {
   };
 
   const handleDeletePosting = (id: number) => {
-    setJobPostings(jobPostings.filter((posting) => posting.id !== id));
+    setJobPostings(jobPostings.filter((posting) => posting.jobID !== id));
   };
 
   return (
@@ -62,7 +54,9 @@ const JobPosting: React.FC = () => {
         <div className="flex flex-col w-full ">
           <div className="flex  w-[200px] h-[38px] mb-4">
             <Button
-              onClick={() => handleShowModal(null)}
+              onClick={() => {
+                handleShowModal(null)
+              }}
               mode={"solid"}
               buttonText=" Add New Job Posting"
               loading={false}

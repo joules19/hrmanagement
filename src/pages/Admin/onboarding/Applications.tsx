@@ -1,84 +1,108 @@
-import React, { useState } from "react";
-import {  Application } from "../../../types/onboarding";
+import React, { useEffect, useState } from "react";
+import { Application, JobPostingDetails } from "../../../types/onboarding";
 import ApplicationTable from "../../../components/tables/ApplicationTable";
 import ApplicationModal from "../../../components/modals/ApplicationModal";
 import JobListingCard from "../../../components/JobListingCard";
 import PageTitle from "../../../components/ui/PageTitle";
 import { Button } from "../../../components/ui/Button";
-import { JobPosting as FullJobPosting } from "../../../types/onboarding";
+import { JobPostingDetails as FullJobPosting } from "../../../types/onboarding";
+import { useAllPostedJobsMutation, useGetApplicationsMutation } from "../../../store/services/recruitmentApi";
 
-type JobPosting = Pick<FullJobPosting, 'id' | 'title' | 'department' | 'location' | 'status' | 'salaryMin' | 'salaryMax'>;
 
+// // Mock data for job postings
+// const mockJobPostings: JobPosting[] = [
+//   {
+//     id: 1,
+//     title: "Software Engineer",
+//     department: "Engineering",
+//     location: "New York",
+//     status: "Open",
+//     salaryMin: "80000",
+//     salaryMax: "120000",
+//   },
+//   {
+//     id: 2,
+//     title: "Product Manager",
+//     department: "Product",
+//     location: "San Francisco",
+//     status: "Open",
+//     salaryMin: "100000",
+//     salaryMax: "150000",
+//   },
+//   {
+//     id: 3,
+//     title: "UX Designer",
+//     department: "Design",
+//     location: "Remote",
+//     status: "Open",
+//     salaryMin: "70000",
+//     salaryMax: "110000",
+//   },
+// ];
 
-// Mock data for job postings
-const mockJobPostings: JobPosting[] = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    department: "Engineering",
-    location: "New York",
-    status: "Open",
-    salaryMin: "80000",
-    salaryMax: "120000",
-  },
-  {
-    id: 2,
-    title: "Product Manager",
-    department: "Product",
-    location: "San Francisco",
-    status: "Open",
-    salaryMin: "100000",
-    salaryMax: "150000",
-  },
-  {
-    id: 3,
-    title: "UX Designer",
-    department: "Design",
-    location: "Remote",
-    status: "Open",
-    salaryMin: "70000",
-    salaryMax: "110000",
-  },
-];
-
-// Mock data for applications
-const mockApplications: Application[] = [
-  {
-    id: 1,
-    applicantName: "John Doe",
-    position: "Software Engineer",
-    status: "Applied",
-    dateApplied: "2023-05-01",
-  },
-  {
-    id: 2,
-    applicantName: "Jane Smith",
-    position: "Software Engineer",
-    status: "Screening",
-    dateApplied: "2023-05-02",
-  },
-  {
-    id: 3,
-    applicantName: "Bob Johnson",
-    position: "Product Manager",
-    status: "Interview",
-    dateApplied: "2023-05-03",
-  },
-  {
-    id: 4,
-    applicantName: "Alice Brown",
-    position: "UX Designer",
-    status: "Applied",
-    dateApplied: "2023-05-04",
-  },
-];
+// // Mock data for applications
+// const mockApplications: Application[] = [
+//   {
+//     id: 1,
+//     applicantName: "John Doe",
+//     position: "Software Engineer",
+//     status: "Applied",
+//     dateApplied: "2023-05-01",
+//   },
+//   {
+//     id: 2,
+//     applicantName: "Jane Smith",
+//     position: "Software Engineer",
+//     status: "Screening",
+//     dateApplied: "2023-05-02",
+//   },
+//   {
+//     id: 3,
+//     applicantName: "Bob Johnson",
+//     position: "Product Manager",
+//     status: "Interview",
+//     dateApplied: "2023-05-03",
+//   },
+//   {
+//     id: 4,
+//     applicantName: "Alice Brown",
+//     position: "UX Designer",
+//     status: "Applied",
+//     dateApplied: "2023-05-04",
+//   },
+// ];
 
 const Applications: React.FC = () => {
-  const [jobPostings] = useState<JobPosting[]>(mockJobPostings);
-  const [selectedJobPosting, setSelectedJobPosting] = useState<JobPosting | null>(null);
-  const [applications, setApplications] = useState<Application[]>(mockApplications);
+  const [jobPostings] = useState<JobPostingDetails[]>();
+  const [selectedJobPosting, setSelectedJobPosting] = useState<JobPostingDetails | null>(null);
+  const [applications, setApplications] = useState<Application[]>();
   const [showModal, setShowModal] = useState(false);
   const [currentApplication, setCurrentApplication] = useState<Application | null>(null);
+  const [allPostedJobs, { isLoading: isAllPostedJobsLoading, data: allPostedJobsData }] = useAllPostedJobsMutation();
+  const [jobApplications, { isLoading: isJobApplicationsLoading, data: allJobApplicationsData }] = useGetApplicationsMutation();
+  const [jobListings, setJobListings] = useState<any>();
+
+  useEffect(() => {
+    allPostedJobs("");
+  }, [allPostedJobs]);
+
+
+  useEffect(() => {
+
+    if (allPostedJobsData) {
+      // Assuming allPostedJobsData is an array of job objects
+      const jobsObject = allPostedJobsData.map((singlePostedJob: JobPostingDetails) => {
+        return {
+          ...singlePostedJob, // Spread the existing job properties
+          minSalaryRange: singlePostedJob.minSalaryRange || 0, // Update minSalary if needed
+          maxSalaryRange: singlePostedJob.maxSalaryRange || 0, // Update maxSalary if needed
+        };
+      });
+      setJobListings(jobsObject);
+    }
+
+  }, [allPostedJobsData]);
+
 
   const handleShowModal = (application: Application | null) => {
     setCurrentApplication(application);
@@ -93,21 +117,21 @@ const Applications: React.FC = () => {
   const handleSaveApplication = (application: Application) => {
     if (currentApplication) {
       setApplications(
-        applications.map((app) =>
-          app.id === currentApplication.id ? application : app
+        applications!.map((app) =>
+          app.jobID === currentApplication.jobID ? application : app
         )
       );
     } else {
-      setApplications([...applications, { ...application, id: applications.length + 1 }]);
+      setApplications([...applications!, { ...application, jobID: applications!.length + 1 }]);
     }
     handleCloseModal();
   };
 
   const handleDeleteApplication = (id: number) => {
-    setApplications(applications.filter((app) => app.id !== id));
+    setApplications(applications!.filter((app) => app.jobID !== id));
   };
 
-  const handleSelectJobPosting = (jobPosting: JobPosting) => {
+  const handleSelectJobPosting = (jobPosting: JobPostingDetails) => {
     setSelectedJobPosting(jobPosting);
   };
 
@@ -117,19 +141,19 @@ const Applications: React.FC = () => {
 
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="flex flex-wrap justify-start">
-          {jobPostings.map((jobPosting) => (
+          {allPostedJobsData != null && (allPostedJobsData!.map((jobPosting) => (
             <JobListingCard
-              key={jobPosting.id}
+              key={jobPosting.jobID}
               jobPosting={jobPosting as FullJobPosting}
               onClick={() => handleSelectJobPosting(jobPosting)}
             />
-          ))}
+          )))}
         </div>
 
         {selectedJobPosting && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">
-              Applicants for {selectedJobPosting.title}
+              Applicants for {selectedJobPosting.jobTitle}
             </h2>
             <div className="flex w-[200px] h-[38px] mb-4">
               <Button
@@ -142,7 +166,7 @@ const Applications: React.FC = () => {
               />
             </div>
             <ApplicationTable
-              applications={applications.filter(app => app.position === selectedJobPosting.title)}
+              applications={applications!.filter(app => app.dob === selectedJobPosting.jobTitle)}
               onEdit={handleShowModal}
               onDelete={handleDeleteApplication}
             />

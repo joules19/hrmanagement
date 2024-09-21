@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputField from "../ui/InputField";
@@ -10,22 +10,10 @@ import {
   PlusCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { JobPosting } from "../../types/onboarding";
+import { usePostJobMutation } from "../../store/services/recruitmentApi";
+import { message } from "antd";
 
-interface JobPosting {
-  title: string;
-  department: string;
-  location: string;
-  description: string;
-  qualifications: string[];
-  requirements: string[];
-  benefits: string[];
-  status: string;
-  postedDate: string;
-  salaryMin: string;
-  salaryMax: string;
-  jobType: string;
-  workLocationType: string;
-}
 
 interface JobPostingModalProps {
   show: boolean;
@@ -41,34 +29,49 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   onSave,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [postJob, { isLoading: isJobPosting, data: postJobSuccess, error: postJobFailure }] = usePostJobMutation();
+
+  useEffect(() => {
+    if (postJobSuccess) {
+      message.success("Application created successfully")
+      handleClose();
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000);
+      return;
+    } else if (postJobFailure) {
+      message.error("Application creation failed")
+    }
+  }, [postJobSuccess])
+
 
   // Formik setup
   const formik = useFormik<JobPosting>({
     initialValues: {
-      title: currentPosting?.title || "",
+      jobTitle: currentPosting?.jobTitle || "",
       department: currentPosting?.department || "",
-      location: currentPosting?.location || "",
+      companyAddress: currentPosting?.companyAddress || "",
       description: currentPosting?.description || "",
       qualifications: currentPosting?.qualifications || [""],
-      requirements: currentPosting?.requirements || [""],
+      responsibilities: currentPosting?.responsibilities || [""],
       benefits: currentPosting?.benefits || [""],
       status: currentPosting?.status || "Open",
-      postedDate:
-        currentPosting?.postedDate || new Date().toISOString().split("T")[0],
+      postingDate:
+        currentPosting?.postingDate || new Date().toISOString().split("T")[0],
       salaryMin: currentPosting?.salaryMin || "",
       salaryMax: currentPosting?.salaryMax || "",
-      jobType: currentPosting?.jobType || "",
-      workLocationType: currentPosting?.workLocationType || "",
+      jobMode: currentPosting?.jobMode || "",
+      workMode: currentPosting?.workMode || "",
     },
     validationSchema: Yup.object({
-      title: Yup.string().required("Job Title is required"),
+      jobTitle: Yup.string().required("Job Title is required"),
       department: Yup.string().required("Department is required"),
-      location: Yup.string().required("Location is required"),
+      companyAddress: Yup.string().required("Company Address is required"),
       description: Yup.string().required("Description is required"),
       qualifications: Yup.array()
         .of(Yup.string().required("Qualification is required"))
         .min(1, "At least one qualification is required"),
-      requirements: Yup.array()
+      responsibilities: Yup.array()
         .of(Yup.string().required("Requirement is required"))
         .min(1, "At least one requirement is required"),
       benefits: Yup.array()
@@ -84,30 +87,29 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
           "Maximum salary must be greater than minimum salary"
         )
         .required("Maximum salary is required"),
-      jobType: Yup.string().required("Job type is required"),
-      workLocationType: Yup.string().required("Work location type is required"),
+      jobMode: Yup.string().required("Job type is required"),
+      workMode: Yup.string().required("Work location type is required"),
     }),
     onSubmit: (values) => {
       const newPosting: JobPosting = {
         ...values,
+        jobCode: "",
         qualifications: values.qualifications.filter((q) => q.trim() !== ""),
-        requirements: values.requirements.filter((r) => r.trim() !== ""),
+        responsibilities: values.responsibilities.filter((r) => r.trim() !== ""),
         benefits: values.benefits.filter((b) => b.trim() !== ""),
       };
-      console.log(newPosting);
-
-      //onSave(newPosting);
+      postJob(newPosting)
     },
   });
 
   const handleAddField = (
-    field: "qualifications" | "requirements" | "benefits"
+    field: "qualifications" | "responsibilities" | "benefits"
   ) => {
     formik.setFieldValue(field, [...formik.values[field], ""]);
   };
 
   const handleRemoveField = (
-    field: "qualifications" | "requirements" | "benefits",
+    field: "qualifications" | "responsibilities" | "benefits",
     index: number
   ) => {
     const newFieldValues = formik.values[field].filter((_, i) => i !== index);
@@ -115,7 +117,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   };
 
   const renderDynamicFields = (
-    field: "qualifications" | "requirements" | "benefits",
+    field: "qualifications" | "responsibilities" | "benefits",
     values: string[],
     label: string
   ) => (
@@ -170,13 +172,13 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
             <form onSubmit={formik.handleSubmit}>
               <InputField
                 label="Job Title"
-                id="title"
-                name="title"
-                value={formik.values.title}
+                id="jobTitle"
+                name="jobTitle"
+                value={formik.values.jobTitle}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
-                error={formik.touched.title && formik.errors.title}
+                error={formik.touched.jobTitle && formik.errors.jobTitle}
               />
               <InputField
                 label="Department"
@@ -189,14 +191,14 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 error={formik.touched.department && formik.errors.department}
               />
               <InputField
-                label="Location"
-                id="location"
-                name="location"
-                value={formik.values.location}
+                label="Company Address"
+                id="companyAddress"
+                name="companyAddress"
+                value={formik.values.companyAddress}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
-                error={formik.touched.location && formik.errors.location}
+                error={formik.touched.companyAddress && formik.errors.companyAddress}
               />
               <TextAreaField
                 label="Description"
@@ -237,27 +239,27 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
               </div>
               <SelectField
                 label="Job Type"
-                id="jobType"
-                name="jobType"
-                value={formik.values.jobType}
+                id="jobMode"
+                name="jobMode"
+                value={formik.values.jobMode}
                 options={["Full-time", "Part-time", "Internship"]}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
-                error={formik.touched.jobType && formik.errors.jobType}
+                error={formik.touched.jobMode && formik.errors.jobMode}
               />
               <SelectField
                 label="Work Location Type"
-                id="workLocationType"
-                name="workLocationType"
-                value={formik.values.workLocationType}
+                id="workMode"
+                name="workMode"
+                value={formik.values.workMode}
                 options={["Onsite", "Remote", "Hybrid"]}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
                 error={
-                  formik.touched.workLocationType &&
-                  formik.errors.workLocationType
+                  formik.touched.workMode &&
+                  formik.errors.workMode
                 }
               />
               {renderDynamicFields(
@@ -266,16 +268,16 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 "Qualifications"
               )}
               {renderDynamicFields(
-                "requirements",
-                formik.values.requirements,
-                "Requirements"
+                "responsibilities",
+                formik.values.responsibilities,
+                "responsibilities"
               )}
               {renderDynamicFields(
                 "benefits",
                 formik.values.benefits,
                 "Benefits"
               )}
-              <SelectField
+              {/* <SelectField
                 label="Status"
                 id="status"
                 name="status"
@@ -285,17 +287,17 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 onBlur={formik.handleBlur}
                 required
                 error={formik.touched.status && formik.errors.status}
-              />
+              /> */}
               {/* <InputField
                 label="Posted Date"
-                id="postedDate"
-                name="postedDate"
+                id="postingDate"
+                name="postingDate"
                 type="date"
-                value={formik.values.postedDate}
+                value={formik.values.postingDate}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
-                error={formik.touched.postedDate && formik.errors.postedDate}
+                error={formik.touched.postingDate && formik.errors.postingDate}
               /> */}
               <div className="flex justify-end space-x-2 mt-4">
                 <div className="flex gap-2 w-[308px] h-[38px]">
@@ -312,7 +314,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                     <Button
                       mode={"solid"}
                       buttonText="Save"
-                      loading={isLoading}
+                      loading={isJobPosting}
                       defaultColor="primary-1"
                       hoverColor="primary-2"
                     />
