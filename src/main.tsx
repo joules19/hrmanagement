@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import { Dashboard } from "./pages/admin/index.ts";
 import AdminLayout from "./pages/layouts/AdminLayout.tsx";
+import EmployeeLayout from "./pages/layouts/EmployeeLayout.tsx"
 import AddEmployee from "./pages/admin/employee/AddEmployee.tsx";
 import JobPosting from "./pages/admin/onboarding/JobPosting.tsx";
 import Applications from "./pages/admin/onboarding/Applications.tsx";
@@ -35,6 +36,12 @@ import EmployeeList from "./pages/admin/employee/EmployeeList.tsx";
 import WebsiteLayout from "./pages/layouts/WebsiteLayout.tsx";
 import JobListings from "./pages/website/JobListings.tsx";
 import JobDetails from "./pages/website/JobDetails.tsx";
+import EmployeeDashboard from "./pages/Employee/EmployeeDashboard.tsx";
+import EmployeeProfile from "./pages/Employee/EmployeeProfile.tsx";
+import PayslipPage from "./pages/Employee/PayslipPage.tsx";
+import LeaveRequestPage from "./pages/Employee/LeaveRequestPage.tsx";
+import PerformanceReviewPage from "./pages/Employee/PerformanceReviewPage.tsx";
+import DocumentManagementPage from "./pages/Employee/DocumentManagementPage.tsx";
 
 // import AddDocument from "./pages/Admin/AddDocument.tsx";
 
@@ -103,6 +110,115 @@ const router = createBrowserRouter([
       {
         path: "/employees/documents",
         element: <EmployeeDocumentManager />,
+        errorElement: <NotFoundPage />,
+      },
+      // Onboarding Routes
+      {
+        path: "/onboarding/job-postings",
+        element: <JobPosting />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/applications",
+        element: <Applications />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/applications",
+        element: <Applications />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/resume-parsing",
+        element: <ResumeParsing />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/onboarding-workflows",
+        element: <OnboardingWorkflow />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/interview-scheduling",
+        element: <InterviewScheduling />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/onboarding/onboarding-process",
+        element: <OnboardingProcess />,
+        errorElement: <NotFoundPage />,
+      },
+
+      // Attendance Routes
+      {
+        path: "/attendance/time-tracking",
+        element: <TimeTracking />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/attendance/attendance-records",
+        element: <TimeTracking />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/attendance/leave-management",
+        element: <LeaveManagement />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/attendance/overtime-management",
+        element: <OvertimeManagement />,
+        errorElement: <NotFoundPage />,
+      },
+
+      // Payroll Routes
+      {
+        path: "/payroll/salary-calculation",
+        element: <SalaryCalculations />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/payroll/payroll-compliance",
+        element: <PayrollCompliance />,
+        errorElement: <NotFoundPage />,
+      },
+    ],
+  },
+  {
+    element: <EmployeeLayout />,
+    children: [
+      {
+        path: "/employee-dashboard",
+        element: (
+          <PrivateRoute>
+            <EmployeeDashboard />
+          </PrivateRoute>
+        ),
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/employee-profile",
+        element: <EmployeeProfile />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/employee-payslips",
+        element: <PayslipPage />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/employee-leave-requests",
+        element: <LeaveRequestPage />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/employee-performance",
+        element: <PerformanceReviewPage />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/employee-document-management",
+        element: <DocumentManagementPage />,
         errorElement: <NotFoundPage />,
       },
       // Onboarding Routes
