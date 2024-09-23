@@ -27,7 +27,8 @@ const NotificationButton: React.FC = () => {
     <Space direction="vertical">
       <Space wrap>
         <Dropdown menu={{ items }} placement="bottomRight" trigger={["click"]}>
-          <Badge count={notifications.length}>
+          {/* <Badge count={notifications.length}> */}
+          <Badge count={1}>
             <Button
               icon={<BellOutlined />}
               shape="default"

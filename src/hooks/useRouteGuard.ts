@@ -25,7 +25,6 @@ const useRouteGuard = (setUserDetails: (session: string) => void) => {
     // Handle route exit
     return () => {
       // Cleanup logic or actions on route exit, if any
-      console.log(`Exiting route: ${location.pathname}`);
     };
   }, [navigate, location, setUserDetails]);
 };

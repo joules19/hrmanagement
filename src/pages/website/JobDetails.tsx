@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Row,
@@ -7,7 +7,7 @@ import {
   Typography,
   Tag,
   List,
-  Button,
+  Button as AntButton,
   Divider,
   Modal,
   Form,
@@ -24,49 +24,21 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaCheckCircle,
-  FaRobot,
 } from "react-icons/fa";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import AppSpinner from "../../components/ui/Spinner";
 import moment from "moment";
 import { SparklesIcon } from "@heroicons/react/24/outline";
-import { analyzeResume } from "../../api/ai";
-import { AnalyzeResumeRequest } from "../../models/api-client/ai/Ai.Interface";
+import { useGetJobMutation } from "../../store/services/recruitmentApi";
+import { Application, JobPostingDetails } from "../../types/onboarding";
+import { daysAgo, formatCurrencyRange, formatMomentDate } from "../../utils/helperMethods";
+import { submitApplication } from "../../api/recruitment";
+import { Button } from "../../components/ui/Button";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
-const job = {
-  title: "Senior Software Engineer",
-  company: "TaviaTech",
-  location: "Motor-Ways Center, Lagos.",
-  type: "Full-time",
-  posted: "2 days ago",
-  salary: "₦320k - ₦550k",
-  description: `
-   We are looking for a highly skilled and motivated Senior Software Engineer to join our dynamic development team. As a Senior Engineer, you will play a pivotal role in designing, building, and maintaining software solutions that are efficient, scalable, and secure. You will be responsible for leading development teams, mentoring junior engineers, and ensuring that the code we deliver is of the highest quality.  `,
-  benefits: [
-    "Health, Dental, and Vision Insurance",
-    "401(k) with company match",
-    "Unlimited PTO",
-    "Flexible work hours",
-    "Remote work options",
-    "Learning and development budget",
-  ],
-  responsibilities: [
-    "Develop and maintain web applications using modern frameworks.",
-    "Collaborate with cross-functional teams to deliver high-quality software.",
-    "Mentor junior developers and provide technical leadership.",
-    "Participate in code reviews and ensure best practices are followed.",
-  ],
-  qualifications: [
-    "5+ years of software development experience.",
-    "Proficiency in JavaScript, TypeScript, and React.",
-    "Experience with cloud platforms like AWS or Azure.",
-    "Excellent problem-solving skills and attention to detail.",
-  ],
-};
 
 const JobDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,7 +46,11 @@ const JobDetails: React.FC = () => {
   const [form] = Form.useForm();
   const [isParsingCv, setIsParsingCv] = useState(false);
   const [resume, setResume] = useState<File>();
+  const [job, setJob] = useState<JobPostingDetails>();
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
+  const [getJob, { isLoading: isJobLoading, data: jobData, error: getJobFailure }] = useGetJobMutation();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // Handle the modal visibility
   const showModal = () => {
@@ -95,7 +71,7 @@ const JobDetails: React.FC = () => {
     try {
       // Send the resume to the backend
       const response = await axios.post(
-        "https://odoobros.pythonanywhere.com/api/extract-info/",
+        `${import.meta.env.VITE_APP_AI_SERVICE_URL}extract-info/`,
         formData,
         {
           headers: {
@@ -114,11 +90,11 @@ const JobDetails: React.FC = () => {
         address,
       });
 
-      const analyzeResumePayload: AnalyzeResumeRequest = {
-        resume: file,
-        keywords: job.qualifications,
-      };
-      await analyzeResume(analyzeResumePayload);
+      // const analyzeResumePayload: AnalyzeResumeRequest = {
+      //   resume: file,
+      //   keywords: job?.qualifications,
+      // };
+      // await analyzeResume(analyzeResumePayload);
 
       setIsParsingCv(false);
       message.success("Resume uploaded and form prefills loaded successfully!");
@@ -130,7 +106,17 @@ const JobDetails: React.FC = () => {
     return false; // Prevent automatic upload by Ant Design Upload component
   };
 
-  const analyzeCV = async () => {};
+  useEffect(() => {
+    getJob(id)
+  }, [getJob])
+
+  useEffect(() => {
+    if (jobData) {
+      setJob(jobData)
+    }
+  }, [jobData])
+
+
 
   // Handle AI-based cover letter generation
   const generateCoverLetter = async () => {
@@ -144,7 +130,7 @@ const JobDetails: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "https://odoobros.pythonanywhere.com/api/generate-cv/",
+        `${import.meta.env.VITE_APP_AI_SERVICE_URL}generate-cv/`,
         formData,
         {
           headers: {
@@ -154,24 +140,47 @@ const JobDetails: React.FC = () => {
       ); // Replace with your API endpoint for AI cover letter generation
 
       const coverLetter = response.data;
-      console.log(response.data);
-
       // Prefill the cover letter field
       form.setFieldsValue({
         coverLetter,
       });
 
       setIsGeneratingCoverLetter(false);
-      message.success("AI-generated cover letter loaded successfully!");
+      message.success("Cover letter generated successfully!");
     } catch (error) {
       setIsGeneratingCoverLetter(false);
       message.error("Failed to generate cover letter.");
     }
   };
 
-  const handleSubmit = (values: any) => {
-    console.log("Application Submitted: ", values);
-    setIsModalVisible(false);
+  const handleSubmit = async (values: any) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const payload: Application = {
+      jobID: job?.jobID!,
+      resume: resume!,
+      firstName: values.name,
+      lastName: values.name,
+      fullName: values.name,
+      email: values.email,
+      phoneNumber: values.phone.replace(/\s+/g, ''),
+      coverLetter: values.coverLetter,
+      dob: formatMomentDate(values.dob)
+    }
+
+
+    await submitApplication(payload).then(data => {
+      if (data) {
+        message.success("Your application has been submitted successfully")
+        setIsLoading(false);
+        setIsModalVisible(false);
+
+      }
+    }).catch(err => {
+      message.error("Operation Failed")
+      setIsLoading(false);
+
+    })
   };
 
   return (
@@ -185,7 +194,7 @@ const JobDetails: React.FC = () => {
           >
             <div className="flex justify-between items-center">
               <Title level={2} style={{ color: "#36A2EB" }}>
-                {job.title}
+                {job?.jobTitle}
               </Title>
               {/* Back to Listings Link */}
               <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -197,41 +206,46 @@ const JobDetails: React.FC = () => {
                 </Link>
               </div>
             </div>
-            <Text strong>{job.company}</Text> - <Text>{job.location}</Text>
+            <Text strong>{job?.companyAddress}</Text>
             <Divider />
             <Row gutter={[16, 16]}>
               <Col>
                 <Tag color="blue" icon={<FaBriefcase />} className="mb-2">
-                  {job.type}
+                  {job?.jobMode}
+                </Tag>
+              </Col>
+              <Col>
+                <Tag color="yellow" icon={<FaBriefcase />} className="mb-2">
+                  {job?.workMode}
                 </Tag>
               </Col>
               <Col>
                 <Tag color="green" icon={<FaClock />} className="mb-2">
-                  Posted {job.posted}
+                  Posted {daysAgo(job?.postingDate!)}
                 </Tag>
               </Col>
               <Col>
                 <Tag color="volcano" icon={<FaMapMarkerAlt />} className="mb-2">
-                  {job.location}
+                  {job?.companyAddress}
                 </Tag>
               </Col>
               <Col>
                 <Tag color="gold" className="mb-2">
-                  {job.salary}
+                  {formatCurrencyRange(job?.minSalaryRange, job?.maxSalaryRange)}
                 </Tag>
               </Col>
             </Row>
             {/* Job Description */}
             <Divider />
-            <Paragraph>{job.description}</Paragraph>
-            <Button
+            <Paragraph>{job?.description}</Paragraph>
+            <AntButton
               type="primary"
               block
               style={{ backgroundColor: "#36A2EB", borderColor: "#36A2EB" }}
               onClick={showModal}
             >
               Apply Now
-            </Button>
+            </AntButton>
           </Card>
         </Col>
 
@@ -244,7 +258,7 @@ const JobDetails: React.FC = () => {
           >
             <Title level={4}>Benefits</Title>
             <List
-              dataSource={job.benefits}
+              dataSource={job?.benefits}
               renderItem={(item) => (
                 <List.Item>
                   <FaCheckCircle
@@ -265,7 +279,7 @@ const JobDetails: React.FC = () => {
           >
             <Title level={4}>Responsibilities</Title>
             <List
-              dataSource={job.responsibilities}
+              dataSource={job?.responsibilities}
               renderItem={(item) => (
                 <List.Item>
                   <Text>- {item}</Text>
@@ -282,7 +296,7 @@ const JobDetails: React.FC = () => {
           >
             <Title level={4}>Qualifications</Title>
             <List
-              dataSource={job.qualifications}
+              dataSource={job?.qualifications}
               renderItem={(item) => (
                 <List.Item>
                   <Text>- {item}</Text>
@@ -318,7 +332,7 @@ const JobDetails: React.FC = () => {
                 }}
                 className="custom-input text-primary-1"
               >
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                <AntButton icon={<UploadOutlined />}>Click to Upload</AntButton>
               </Upload>
             </Tooltip>
           </Form.Item>
@@ -476,6 +490,15 @@ const JobDetails: React.FC = () => {
           </Form.Item>
 
           {/* Cover Letter Field with AI Suggestion */}
+          <Alert
+            message={`Use our AI tool to generate a 150 word Cover Letter crafted carefully from your resume.`}
+            type="info"
+            style={{
+              marginBottom: "8px",
+              backgroundColor: "#F0F8FF",
+              color: "#36A2EB",
+            }}
+          />
           <Row gutter={8}>
             <Col span={22}>
               <Form.Item label="Cover Letter" name="coverLetter">
@@ -493,7 +516,7 @@ const JobDetails: React.FC = () => {
             </Col>
             <Col span={1}>
               <Tooltip title="Generate cover letter using AI">
-                <Button
+                <AntButton
                   icon={
                     <SparklesIcon className="w-[18px] h-[18px] text-primary-1" />
                   }
@@ -513,14 +536,15 @@ const JobDetails: React.FC = () => {
             </Col>
           </Row>
 
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            style={{ backgroundColor: "#36A2EB", borderColor: "#36A2EB" }}
+          <div className="w-full h-[38px] mb-4">  <Button
+            mode={"solid"}
+            buttonText="Submit Application"
+            loading={isLoading}
+            defaultColor="primary-1"
+            hoverColor="primary-2"
           >
-            Submit Application
-          </Button>
+          </Button></div>
+
         </Form>
       </Modal>
     </div>

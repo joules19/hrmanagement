@@ -1,31 +1,37 @@
 import React from "react";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import type { TableColumnsType } from "antd";
-import { Application } from "../../types/onboarding";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { JobApplications } from "../../types/onboarding";
+import { EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { formatStringToDate } from "../../utils/helperMethods";
 
 interface ApplicationTableProps {
-  applications: Application[];
-  onEdit: (application: Application) => void;
+  applications: JobApplications[];
+  onEdit: (application: JobApplications) => void;
   onDelete: (id: number) => void;
 }
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ applications, onEdit, onDelete }) => {
-  const columns: TableColumnsType<Application> = [
+  const columns: TableColumnsType<JobApplications> = [
     {
       title: "Applicant Name",
-      dataIndex: "applicantName",
+      dataIndex: "firstName",
       width: "20%",
-      sorter: (a, b) => a.applicantName.localeCompare(b.applicantName),
+      sorter: (a, b) => a.firstName.localeCompare(b.firstName),
     },
     {
-      title: "Position",
-      dataIndex: "position",
+      title: "Phone",
+      dataIndex: "phoneNumber",
+      width: "20%",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
       width: "20%",
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "statusText",
       width: "15%",
       filters: [
         { text: "Applied", value: "Applied" },
@@ -35,13 +41,41 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ applications, onEdi
         { text: "Hired", value: "Hired" },
         { text: "Rejected", value: "Rejected" },
       ],
-      onFilter: (value, record) => record.status.includes(value as string),
-    },
+      onFilter: (value, record) => record.statusText.includes(value as string),
+      render: (statusText) => {
+        let color = "";
+        let label = "";
+
+        if (statusText === "Applied") {
+          color = "blue";
+          label = "Applied";
+        } else if (statusText === "Screening") {
+          color = "orange";
+          label = "Screening";
+        } else if (statusText === "Interview") {
+          color = "purple";
+          label = "Interview";
+        } else if (statusText === "Offered") {
+          color = "green";
+          label = "Offered";
+        } else if (statusText === "Hired") {
+          color = "cyan";
+          label = "Hired";
+        } else if (statusText === "Rejected") {
+          color = "red";
+          label = "Rejected";
+        }
+
+        return <Tag color={color}>{label}</Tag>;
+      },
+    }
+    ,
     {
       title: "Date Applied",
-      dataIndex: "dateApplied",
+      dataIndex: "applicationDate",
       width: "15%",
-      sorter: (a, b) => new Date(a.dateApplied).getTime() - new Date(b.dateApplied).getTime(),
+      render: (_, record) => (<>{formatStringToDate(record.applicationDate)}</>),
+      sorter: (a, b) => new Date(a.applicationDate).getTime() - new Date(b.applicationDate).getTime(),
     },
     {
       title: "Actions",
@@ -53,14 +87,14 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ applications, onEdi
             className="text-primary-1 py-1 px-2 rounded"
             onClick={() => onEdit(record)}
           >
-            <PencilSquareIcon className="w-4 h-4" />
+            <EyeIcon className="w-4 h-4" />
           </button>
-          <button
+          {/* <button
             className="text-red-500 py-1 px-2 rounded"
             onClick={() => onDelete(record.id)}
           >
             <TrashIcon className="w-4 h-4" />
-          </button>
+          </button> */}
         </div>
       ),
     },
@@ -68,6 +102,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ applications, onEdi
 
   return (
     <Table
+      scroll={{ x: 500 }}
       columns={columns}
       dataSource={applications}
       rowKey="id"

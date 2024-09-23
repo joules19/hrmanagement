@@ -26,6 +26,35 @@ export function getFirstLettersAfterSpace(sentence: string) {
   return result;
 }
 
+export function daysAgo(dateString: any) {
+  // Parse the input string into a Date object
+  const date = new Date(dateString);
+
+  // Get the current date and time
+  const now = new Date();
+
+  // Calculate the difference in milliseconds
+  const diffInMs = Math.abs(now.getTime() - date.getTime());
+
+  // Convert milliseconds to days
+  let daysDiff = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (daysDiff < 1) {
+    daysDiff = 1
+  }
+
+  // Return the result as "X days ago"
+  return `${daysDiff} day${daysDiff !== 1 ? 's' : ''} ago`;
+}
+
+export function formatCurrencyRange(min: any, max: any) {
+  const formattedMinSalary = formatter2(min);
+  const formattedMaxSalary = formatter2(max);
+
+  // Return the formatted salary range
+  return `${formattedMinSalary} - ${formattedMaxSalary}`;
+}
+
 export function convertPhoneNumber(phoneNumber: any) {
   // Remove the leading '+' sign
   return phoneNumber?.replace("+234", "0");
@@ -102,6 +131,14 @@ export const formatter1 = (val: number) => {
   return `₦ ${amount}.00`;
 };
 
+export const formatter2 = (val: number) => {
+  if (val === 0) {
+    return `₦ 0.00`;
+  }
+  const amount = numberWithCommas(val);
+  return `₦${amount}`;
+};
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -150,6 +187,11 @@ export function formatDateTime(
 export function formatStringToLocaleDate(dateTimeString: string) {
   const dateObj = new Date(dateTimeString);
   return `${dateObj.toLocaleDateString()}`;
+}
+
+export function formatMomentDate(dateTimeString: any) {
+  const dateObj = dateTimeString.format("YYYY-MM-DD HH:mm:ss")
+  return dateObj;
 }
 
 export function assignVerifiedStatus(isVerified: boolean) {

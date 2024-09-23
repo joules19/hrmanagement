@@ -1,26 +1,49 @@
 export interface JobPosting {
-  id?: number;
-  title: string;
+  jobID?: number;
+  jobTitle: string;
   department: string;
-  location: string;
+  companyAddress: string;
   description: string;
   qualifications: string[];
-  requirements: string[];
+  responsibilities: string[];
   benefits: string[];
   status: "Open" | "Closed" | "On Hold";
-  postedDate: string;
+  postingDate: string;
   salaryMin: string;
   salaryMax: string;
-  jobType: string;
-  workLocationType: string;
+  jobMode: string;
+  jobCode?: string;
+  workMode: string;
+}
+
+export interface JobPostingDetails {
+  jobID?: number;
+  jobTitle: string;
+  department: string;
+  companyAddress: string;
+  description: string;
+  qualifications: string[];
+  responsibilities: string[];
+  benefits: string[];
+  status: "Open" | "Closed" | "On Hold";
+  postingDate: string;
+  minSalaryRange: string;
+  maxSalaryRange: string;
+  jobMode: string;
+  jobCode?: string;
+  workMode: string;
 }
 
 export interface Application {
-  id: number;
-  applicantName: string;
-  position: string;
-  status: string;
-  dateApplied: string;
+  jobID: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  fullName: string;
+  dob: string;
+  phoneNumber: string;
+  coverLetter: string;
+  resume: File
 }
 
 export interface OnboardingStep {
@@ -59,4 +82,29 @@ export interface Interview {
   interviewTime: string;
   position: string;
   notes: string;
+}
+
+
+export interface Job {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+}
+
+export interface JobApplications {
+  applicantID: number;
+  jobID: number;
+  firstName: string;
+  lastName: string;
+  fullname: string;
+  phoneNumber: string;
+  email: string;
+  resumeFilePath: string;
+  applicationDate: string; // If you prefer Date, use: Date instead of string
+  dob: string; // If you prefer Date, use: Date instead of string
+  status: number;
+  statusText: string;
+  coverletter: string;
 }

@@ -12,7 +12,6 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ employeeId }) => {
 
   const handleDownload = (fileUrl: string, fileName: string) => {
     // Implement document download logic here
-    console.log(`Downloading ${fileName} from ${fileUrl}`);
   };
 
   return (

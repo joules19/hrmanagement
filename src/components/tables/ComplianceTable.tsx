@@ -46,7 +46,6 @@ const columns: TableColumnsType<ComplianceItem> = [
         </button>
         <button
           className="text-red-500 py-1 px-2 rounded"
-          onClick={() => console.log("Delete", record.id)}
         >
           <TrashIcon className="w-4 h-4" />
         </button>
@@ -72,7 +71,6 @@ const onChange: TableProps<ComplianceItem>["onChange"] = (
   sorter,
   extra
 ) => {
-  console.log("Table parameters", pagination, filters, sorter, extra);
 };
 
 const ComplianceTable: React.FC = () => (

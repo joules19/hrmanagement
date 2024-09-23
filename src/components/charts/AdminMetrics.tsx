@@ -8,11 +8,11 @@ interface MetricsItem {
 }
 
 const metrics: MetricsItem[] = [
-  { title: "Open Positions", count: 4, color: "blue" },
-  { title: "Ongoing Interviews", count: 7, color: "cyan" },
-  { title: "Pending Reviews", count: 12, color: "orange" },
-  { title: "Upcoming Trainings", count: 3, color: "green" },
-  { title: "Leave Requests", count: 5, color: "red" },
+  { title: "Open Positions", count: 3, color: "blue" },
+  { title: "Ongoing Interviews", count: 0, color: "cyan" },
+  { title: "Pending Reviews", count: 0, color: "orange" },
+  { title: "Upcoming Trainings", count: 0, color: "green" },
+  { title: "Leave Requests", count: 0, color: "red" },
 ];
 
 const AdminMetrics: React.FC = () => {

@@ -7,6 +7,16 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
 // Define your chart data and options
+// const chartData = {
+//   labels: ["Department A", "Department B", "Department C"],
+//   datasets: [
+//     {
+//       data: [30, 40, 30],
+//       backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+//     },
+//   ],
+// };
+
 const chartData = {
   labels: ["Department A", "Department B", "Department C"],
   datasets: [

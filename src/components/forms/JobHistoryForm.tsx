@@ -5,14 +5,14 @@ import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
 import { Button } from "../ui/Button";
 
-const jobTypes = ["Full-time", "Part-time", "Contract", "Internship"];
+const jobModes = ["Full-time", "Part-time", "Contract", "Internship"];
 
 interface JobHistory {
   companyName: string;
   jobTitle: string;
   startDate: string;
   endDate: string;
-  jobType: string;
+  jobMode: string;
   responsibilities: string;
 }
 
@@ -23,7 +23,7 @@ const JobHistoryForm: React.FC = () => {
       jobTitle: "",
       startDate: "",
       endDate: "",
-      jobType: "",
+      jobMode: "",
       responsibilities: "",
     },
     validationSchema: Yup.object({
@@ -34,11 +34,10 @@ const JobHistoryForm: React.FC = () => {
         Yup.ref('startDate'),
         "End date can't be before start date"
       ),
-      jobType: Yup.string().required("Job type is required"),
+      jobMode: Yup.string().required("Job type is required"),
       responsibilities: Yup.string().required("Responsibilities are required"),
     }),
     onSubmit: (values) => {
-      console.log("Job history submitted:", values);
     },
   });
 
@@ -91,14 +90,14 @@ const JobHistoryForm: React.FC = () => {
           />
           <SelectField
             label="Job Type"
-            id="jobType"
-            name="jobType"
-            value={formik.values.jobType}
-            options={jobTypes}
+            id="jobMode"
+            name="jobMode"
+            value={formik.values.jobMode}
+            options={jobModes}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required
-            error={formik.touched.jobType && formik.errors.jobType}
+            error={formik.touched.jobMode && formik.errors.jobMode}
           />
           <InputField
             label="Responsibilities"
