@@ -47,7 +47,6 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values) => {
-                console.log(values);
 
                 onSave({
                   id: currentStep?.id || Date.now(),

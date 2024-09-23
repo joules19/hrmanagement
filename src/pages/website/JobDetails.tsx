@@ -491,7 +491,7 @@ const JobDetails: React.FC = () => {
 
           {/* Cover Letter Field with AI Suggestion */}
           <Alert
-            message="Use our AI tool to generate a 150 word Cover Letter crafted carefully from your resume."
+            message={`Use our AI tool to generate a 150 word Cover Letter crafted carefully from your resume.`}
             type="info"
             style={{
               marginBottom: "8px",

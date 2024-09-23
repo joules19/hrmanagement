@@ -146,7 +146,6 @@ const ResumeParsing: React.FC = () => {
 
   const handleUpload = async () => {
     if (file) {
-      console.log("Uploading file:", file.name);
       // Simulating parsed result
       const parsedResult: Omit<ParsedResume, "id"> = {
         candidateName: "Parsed Name",

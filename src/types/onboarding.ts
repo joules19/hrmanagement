@@ -43,7 +43,6 @@ export interface Application {
   dob: string;
   phoneNumber: string;
   coverLetter: string;
-  status?: string;
   resume: File
 }
 
@@ -92,4 +91,20 @@ export interface Job {
   company: string;
   location: string;
   description: string;
+}
+
+export interface JobApplications {
+  applicantID: number;
+  jobID: number;
+  firstName: string;
+  lastName: string;
+  fullname: string;
+  phoneNumber: string;
+  email: string;
+  resumeFilePath: string;
+  applicationDate: string; // If you prefer Date, use: Date instead of string
+  dob: string; // If you prefer Date, use: Date instead of string
+  status: number;
+  statusText: string;
+  coverletter: string;
 }

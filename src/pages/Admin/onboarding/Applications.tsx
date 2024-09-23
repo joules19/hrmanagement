@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Application, JobPostingDetails } from "../../../types/onboarding";
+import { Application, JobApplicants, JobPostingDetails } from "../../../types/onboarding";
 import ApplicationTable from "../../../components/tables/ApplicationTable";
 import ApplicationModal from "../../../components/modals/ApplicationModal";
 import JobListingCard from "../../../components/JobListingCard";
 import PageTitle from "../../../components/ui/PageTitle";
 import { Button } from "../../../components/ui/Button";
 import { JobPostingDetails as FullJobPosting } from "../../../types/onboarding";
-import { useAllPostedJobsMutation, useGetApplicationsMutation } from "../../../store/services/recruitmentApi";
+import { useAllPostedJobsMutation, useGetApplicationsByJobIdMutation, useGetApplicationsMutation } from "../../../store/services/recruitmentApi";
 
 
 // // Mock data for job postings
@@ -75,12 +75,14 @@ import { useAllPostedJobsMutation, useGetApplicationsMutation } from "../../../s
 const Applications: React.FC = () => {
   const [jobPostings] = useState<JobPostingDetails[]>();
   const [selectedJobPosting, setSelectedJobPosting] = useState<JobPostingDetails | null>(null);
-  const [applications, setApplications] = useState<Application[]>();
+  const [applications, setApplications] = useState<JobApplicants[]>();
   const [showModal, setShowModal] = useState(false);
   const [currentApplication, setCurrentApplication] = useState<Application | null>(null);
   const [allPostedJobs, { isLoading: isAllPostedJobsLoading, data: allPostedJobsData }] = useAllPostedJobsMutation();
-  const [jobApplications, { isLoading: isJobApplicationsLoading, data: allJobApplicationsData }] = useGetApplicationsMutation();
+  const [jobApplications, { isLoading: isJobApplicationsLoading, data: allJobApplicationsData }] = useGetApplicationsByJobIdMutation();
   const [jobListings, setJobListings] = useState<any>();
+  const [currentJobId, setCurrentJobId] = useState<number>();
+
 
   useEffect(() => {
     allPostedJobs("");
@@ -88,7 +90,6 @@ const Applications: React.FC = () => {
 
 
   useEffect(() => {
-
     if (allPostedJobsData) {
       // Assuming allPostedJobsData is an array of job objects
       const jobsObject = allPostedJobsData.map((singlePostedJob: JobPostingDetails) => {
@@ -103,6 +104,20 @@ const Applications: React.FC = () => {
 
   }, [allPostedJobsData]);
 
+  useEffect(() => {
+    if (selectedJobPosting?.jobID) {
+      jobApplications(selectedJobPosting?.jobID);
+
+    }
+  }, [selectedJobPosting?.jobID]);
+
+  useEffect(() => {
+
+    if (allJobApplicationsData) {
+      setApplications(allJobApplicationsData)
+    }
+
+  }, [allJobApplicationsData]);
 
   const handleShowModal = (application: Application | null) => {
     setCurrentApplication(application);
@@ -155,7 +170,7 @@ const Applications: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">
               Applicants for {selectedJobPosting.jobTitle}
             </h2>
-            <div className="flex w-[200px] h-[38px] mb-4">
+            {/* <div className="flex w-[200px] h-[38px] mb-4">
               <Button
                 onClick={() => handleShowModal(null)}
                 mode={"solid"}
@@ -164,9 +179,9 @@ const Applications: React.FC = () => {
                 defaultColor="primary-1"
                 hoverColor="primary-2"
               />
-            </div>
+            </div> */}
             <ApplicationTable
-              applications={applications!.filter(app => app.dob === selectedJobPosting.jobTitle)}
+              applications={applications!}
               onEdit={handleShowModal}
               onDelete={handleDeleteApplication}
             />

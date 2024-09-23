@@ -36,7 +36,6 @@ const AddDocumentForm: React.FC = () => {
       setIsLoading(true);
       // Simulate API call
       setTimeout(() => {
-        console.log("Document submitted:", values);
         toast.success("Document added successfully", {
           duration: 5000,
         });

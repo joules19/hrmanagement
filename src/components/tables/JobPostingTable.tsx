@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Spin, message } from "antd";
+import { Table, Spin, message, Tag } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { JobPosting, JobPostingDetails } from "../../types/onboarding";
 import { useAllPostedJobsMutation, useRemoveJobMutation } from "../../store/services/recruitmentApi";
+import { formatStringToDate } from "../../utils/helperMethods";
 
 const onChange: TableProps<JobPostingDetails>["onChange"] = (
   pagination,
@@ -11,7 +12,6 @@ const onChange: TableProps<JobPostingDetails>["onChange"] = (
   sorter,
   extra
 ) => {
-  console.log("Table parameters", pagination, filters, sorter, extra);
 };
 
 const JobPostingTable: React.FC = () => {
@@ -33,7 +33,6 @@ const JobPostingTable: React.FC = () => {
   }, [allPostedJobsData, setData, setLoading]);
 
   useEffect(() => {
-    console.log(removeJobFailure);
     if (removeJobFailure) {
       message.success("Application deleted successfully");
       setTimeout(() => {
@@ -75,11 +74,26 @@ const JobPostingTable: React.FC = () => {
         { text: "On Hold", value: "On Hold" },
       ],
       onFilter: (value, record) => record.status.includes(value as string),
-    },
+      render: (status) => {
+        let color = "";
+
+        if (status === "Open") {
+          color = "green";
+        } else if (status === "Closed") {
+          color = "red";
+        } else if (status === "On Hold") {
+          color = "orange";
+        }
+
+        return <Tag color={color}>{status}</Tag>;
+      },
+    }
+    ,
     {
       title: "Posted Date",
       dataIndex: "postingDate",
       width: "20%",
+      render: (_, record) => (<>{formatStringToDate(record.postingDate)}</>),
       sorter: (a, b) =>
         new Date(a.postingDate).getTime() - new Date(b.postingDate).getTime(),
     },

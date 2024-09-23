@@ -47,7 +47,6 @@ export const analyzeResume = async (
 //       .analyzeResume(payload)
 //       .then((data) => {
 //         if (data) {
-//           console.log(data);
 //           resolve(data.data);
 //         }
 //       })

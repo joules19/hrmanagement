@@ -38,7 +38,6 @@ const JobHistoryForm: React.FC = () => {
       responsibilities: Yup.string().required("Responsibilities are required"),
     }),
     onSubmit: (values) => {
-      console.log("Job history submitted:", values);
     },
   });
 

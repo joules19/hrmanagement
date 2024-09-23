@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addTokenToRequest } from "../../lib/token";
-import { Application, JobPosting, JobPostingDetails } from "../../types/onboarding";
+import { Application, JobApplications, JobPosting, JobPostingDetails } from "../../types/onboarding";
 
 export const recruitmentApi = createApi({
     reducerPath: "recruitmentApi",
@@ -43,7 +43,13 @@ export const recruitmentApi = createApi({
                 method: "Get",
             }),
         }),
+        getApplicationsByJobId: build.mutation<JobApplications[], any>({
+            query: (id) => ({
+                url: `/Applicants/GetllApplicantsBy/${id}`,
+                method: "Get",
+            }),
+        }),
     }),
 });
 
-export const { usePostJobMutation, useAllPostedJobsMutation, useRemoveJobMutation, useGetJobMutation, useGetApplicationsMutation } = recruitmentApi;
+export const { usePostJobMutation, useAllPostedJobsMutation, useRemoveJobMutation, useGetJobMutation, useGetApplicationsMutation, useGetApplicationsByJobIdMutation } = recruitmentApi;

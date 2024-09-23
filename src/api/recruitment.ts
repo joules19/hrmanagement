@@ -15,7 +15,6 @@ export const submitApplication = async (
         formData.append("email", payload.email);
         formData.append("dob", payload.dob);
         formData.append("phoneNumber", payload.phoneNumber);
-        formData.append("status", "Pending");
         formData.append("coverLetter", payload.coverLetter);
 
         axios

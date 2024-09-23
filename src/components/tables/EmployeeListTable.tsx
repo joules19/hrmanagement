@@ -115,7 +115,6 @@ const onChange: TableProps<EmployeeData>["onChange"] = (
   sorter,
   extra
 ) => {
-  console.log("Table parameters", pagination, filters, sorter, extra);
 };
 
 const App: React.FC = () => (

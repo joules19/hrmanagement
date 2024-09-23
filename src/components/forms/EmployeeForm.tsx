@@ -66,7 +66,6 @@ const EmployeeForm: React.FC = () => {
       lga: Yup.string().required("LGA is required"),
     }),
     onSubmit: (values) => {
-      console.log("Form submitted:", values);
     },
   });
 

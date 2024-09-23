@@ -28,10 +28,9 @@ const LogoutButton: React.FC = () => {
   };
 
   const cancelLogout = (): void => {
-    notification.info({
-      message: "Logout Cancelled",
-      description: "You are still logged in.",
-    });
+    // message.info("Logout Cancelled. You are still logged in")
+    message.info("You are still logged in.")
+
   };
 
   return (

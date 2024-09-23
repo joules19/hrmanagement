@@ -42,10 +42,8 @@ const Login: React.FC = () => {
             isAdmin: loginAsAdmin,
           }
         );
-        console.log(response);
         if (response.status === 201) {
           // Delay the session creation for 200ms after successful login
-          console.log(response.data);
 
           setTimeout(() => {
             const userDetails = {

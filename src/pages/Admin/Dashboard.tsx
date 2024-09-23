@@ -14,21 +14,21 @@ const Dashboard: React.FC = () => {
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-4">
           <DashboardCard
-            count={dashboardData.employeeCount}
+            count={0}
             title="Total Employees"
             icon={TeamOutlined}
             color="#B7EB8F"
             isMoney={false}
           />
           <DashboardCard
-            count={dashboardData.departmentCount}
+            count={0}
             title="Total Departments"
             icon={AppstoreAddOutlined}
             color="#FFC106"
             isMoney={false}
           />
           <DashboardCard
-            count={dashboardData.totalExpenses}
+            count={0}
             title="Total Expenses"
             icon={SiExpensify}
             color="#36A2EB"

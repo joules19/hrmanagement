@@ -294,7 +294,7 @@ export default function AdminLayout() {
                               item.current
                                 ? "bg-primary-2 text-white"
                                 : "text-primary-3 hover:bg-primary-2",
-                              "group flex items-center px- border py-2 text-sm font-medium rounded-md"
+                              "group flex items-center px-  py-2 text-sm font-medium rounded-md"
                             )}
                           >
                             <item.icon
