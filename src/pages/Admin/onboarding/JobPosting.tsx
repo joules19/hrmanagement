@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { JobPosting as JobPostingModel } from "../../../types/onboarding";
+import { JobPostingDetails as JobPostingModel } from "../../../types/onboarding";
 import JobPostingTable from "../../../components/tables/JobPostingTable";
 import JobPostingModal from "../../../components/modals/JobPostingModal";
 import { Button } from "../../../components/ui/Button";
@@ -11,7 +11,6 @@ const JobPosting: React.FC = () => {
   const [currentPosting, setCurrentPosting] = useState<JobPostingModel | null>(
     null
   );
-
 
   useEffect(() => {
     // Save job postings to local storage whenever it changes

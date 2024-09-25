@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Application, JobApplicants, JobPostingDetails } from "../../../types/onboarding";
+import { Application, JobApplication, JobApplications, JobPostingDetails } from "../../../types/onboarding";
 import ApplicationTable from "../../../components/tables/ApplicationTable";
 import ApplicationModal from "../../../components/modals/ApplicationModal";
 import JobListingCard from "../../../components/JobListingCard";
@@ -75,9 +75,9 @@ import { useAllPostedJobsMutation, useGetApplicationsByJobIdMutation, useGetAppl
 const Applications: React.FC = () => {
   const [jobPostings] = useState<JobPostingDetails[]>();
   const [selectedJobPosting, setSelectedJobPosting] = useState<JobPostingDetails | null>(null);
-  const [applications, setApplications] = useState<JobApplicants[]>();
+  const [applications, setApplications] = useState<JobApplications[]>();
   const [showModal, setShowModal] = useState(false);
-  const [currentApplication, setCurrentApplication] = useState<Application | null>(null);
+  const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
   const [allPostedJobs, { isLoading: isAllPostedJobsLoading, data: allPostedJobsData }] = useAllPostedJobsMutation();
   const [jobApplications, { isLoading: isJobApplicationsLoading, data: allJobApplicationsData }] = useGetApplicationsByJobIdMutation();
   const [jobListings, setJobListings] = useState<any>();
@@ -119,7 +119,7 @@ const Applications: React.FC = () => {
 
   }, [allJobApplicationsData]);
 
-  const handleShowModal = (application: Application | null) => {
+  const handleShowModal = (application: JobApplication | null) => {
     setCurrentApplication(application);
     setShowModal(true);
   };
@@ -127,19 +127,6 @@ const Applications: React.FC = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setCurrentApplication(null);
-  };
-
-  const handleSaveApplication = (application: Application) => {
-    if (currentApplication) {
-      setApplications(
-        applications!.map((app) =>
-          app.jobID === currentApplication.jobID ? application : app
-        )
-      );
-    } else {
-      setApplications([...applications!, { ...application, jobID: applications!.length + 1 }]);
-    }
-    handleCloseModal();
   };
 
   const handleDeleteApplication = (id: number) => {
@@ -188,12 +175,11 @@ const Applications: React.FC = () => {
           </div>
         )}
 
-        <ApplicationModal
+        {showModal && (<ApplicationModal
           show={showModal}
           handleClose={handleCloseModal}
           currentApplication={currentApplication}
-          onSave={handleSaveApplication}
-        />
+        />)}
       </div>
     </div>
   );

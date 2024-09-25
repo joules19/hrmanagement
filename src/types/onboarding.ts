@@ -107,4 +107,22 @@ export interface JobApplications {
   status: number;
   statusText: string;
   coverletter: string;
+  resumeFile: string;
+}
+
+export interface JobApplication {
+  applicantID: number;
+  jobID: number;
+  firstName: string;
+  lastName: string;
+  fullname: string;
+  phoneNumber: string;
+  email: string;
+  resumeFilePath: string;
+  applicationDate: string; // If you prefer Date, use: Date instead of string
+  dob: string; // If you prefer Date, use: Date instead of string
+  status: number;
+  statusText: string;
+  coverletter: string;
+  resumeFile: string;
 }

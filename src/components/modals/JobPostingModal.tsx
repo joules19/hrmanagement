@@ -10,7 +10,7 @@ import {
   PlusCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { JobPosting } from "../../types/onboarding";
+import { JobPosting, JobPostingDetails } from "../../types/onboarding";
 import { usePostJobMutation } from "../../store/services/recruitmentApi";
 import { message } from "antd";
 
@@ -18,8 +18,8 @@ import { message } from "antd";
 interface JobPostingModalProps {
   show: boolean;
   handleClose: () => void;
-  currentPosting: JobPosting | null;
-  onSave: (posting: JobPosting) => void;
+  currentPosting: JobPostingDetails | null;
+  onSave: (posting: JobPostingDetails) => void;
 }
 
 const JobPostingModal: React.FC<JobPostingModalProps> = ({
@@ -46,7 +46,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
 
 
   // Formik setup
-  const formik = useFormik<JobPosting>({
+  const formik = useFormik<JobPostingDetails>({
     initialValues: {
       jobTitle: currentPosting?.jobTitle || "",
       department: currentPosting?.department || "",
@@ -58,8 +58,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
       status: currentPosting?.status || "Open",
       postingDate:
         currentPosting?.postingDate || new Date().toISOString().split("T")[0],
-      salaryMin: currentPosting?.salaryMin || "",
-      salaryMax: currentPosting?.salaryMax || "",
+      minSalaryRange: currentPosting?.minSalaryRange || "",
+      maxSalaryRange: currentPosting?.maxSalaryRange || "",
       jobMode: currentPosting?.jobMode || "",
       workMode: currentPosting?.workMode || "",
     },
@@ -78,12 +78,12 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
         .of(Yup.string().required("Benefit is required"))
         .min(1, "At least one benefit is required"),
       status: Yup.string().required("Status is required"),
-      salaryMin: Yup.number()
+      minSalaryRange: Yup.number()
         .min(0, "Salary must be positive")
         .required("Minimum salary is required"),
-      salaryMax: Yup.number()
+      maxSalaryRange: Yup.number()
         .min(
-          Yup.ref("salaryMin"),
+          Yup.ref("minSalaryRange"),
           "Maximum salary must be greater than minimum salary"
         )
         .required("Maximum salary is required"),
@@ -91,7 +91,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
       workMode: Yup.string().required("Work location type is required"),
     }),
     onSubmit: (values) => {
-      const newPosting: JobPosting = {
+      const newPosting: JobPostingDetails = {
         ...values,
         jobCode: "",
         qualifications: values.qualifications.filter((q) => q.trim() !== ""),
@@ -216,24 +216,24 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 </label>
                 <div className="flex space-x-2">
                   <InputField
-                    id="salaryMin"
-                    name="salaryMin"
-                    value={formik.values.salaryMin}
+                    id="minSalaryRange"
+                    name="minSalaryRange"
+                    value={formik.values.minSalaryRange}
                     type="number"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     required
-                    error={formik.touched.salaryMin && formik.errors.salaryMin}
+                    error={formik.touched.minSalaryRange && formik.errors.minSalaryRange}
                   />
                   <InputField
-                    id="salaryMax"
-                    name="salaryMax"
-                    value={formik.values.salaryMax}
+                    id="maxSalaryRange"
+                    name="maxSalaryRange"
+                    value={formik.values.maxSalaryRange}
                     type="number"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     required
-                    error={formik.touched.salaryMax && formik.errors.salaryMax}
+                    error={formik.touched.maxSalaryRange && formik.errors.maxSalaryRange}
                   />
                 </div>
               </div>
