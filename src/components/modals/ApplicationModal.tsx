@@ -17,6 +17,7 @@ interface ApplicationModalProps {
   onSave?: (application: JobApplication) => void;
 }
 
+
 const validationSchema = Yup.object({
   meetingLink: Yup.string().url("Invalid URL").required("Meeting link is required"),
   interviewAttendants: Yup.array()
@@ -76,6 +77,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
     useGetApplicationMutation();
   const [applicationData, setApplicationData] = useState<JobApplication | null>(null);
   const [inviteModal, setInviteModal] = useState(false); // To toggle the invite modal
+  console.log(currentApplication);
 
   useEffect(() => {
     if (show && currentApplication) {

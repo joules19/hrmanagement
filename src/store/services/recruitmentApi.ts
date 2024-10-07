@@ -49,9 +49,9 @@ export const recruitmentApi = createApi({
                 method: "Get",
             }),
         }),
-        getApplicationsByJobId: build.mutation<JobApplications[], any>({
+        getApplicationsByJobId: build.mutation<JobApplication[], any>({
             query: (id) => ({
-                url: `/Applicants/GetllApplicantsBy/${id}`,
+                url: `/Applicants/get-all-applicants-by-job-id/${id}`,
                 method: "Get",
             }),
         }),

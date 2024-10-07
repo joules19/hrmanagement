@@ -14,7 +14,7 @@ const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) 
 
     <Tooltip title={jobPosting.jobTitle}>
       <Card
-        title={<Tooltip title={jobPosting.jobTitle}>{jobPosting.jobTitle}</Tooltip>}
+        title={jobPosting.jobTitle}
         extra={
           <a
             href="#"

@@ -84,6 +84,7 @@ const Applications: React.FC = () => {
   const [currentJobId, setCurrentJobId] = useState<number>();
 
 
+
   useEffect(() => {
     allPostedJobs("");
   }, [allPostedJobs]);
