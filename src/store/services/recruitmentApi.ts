@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addTokenToRequest } from "../../lib/token";
-import { Application, JobApplication, JobApplications, JobPosting, JobPostingDetails } from "../../types/onboarding";
+import { ApplicantInterview, Application, JobApplication, JobApplications, JobPosting, JobPostingDetails, SendInvitation } from "../../types/onboarding";
 
 export const recruitmentApi = createApi({
     reducerPath: "recruitmentApi",
@@ -55,7 +55,37 @@ export const recruitmentApi = createApi({
                 method: "Get",
             }),
         }),
+        sendInvitation: build.mutation<any, SendInvitation>({
+            query: (data) => ({
+                url: `/Applicants/send-invite`,
+                method: "Post",
+                body: data,
+            }),
+        }),
+        getInterviews: build.mutation<ApplicantInterview[], any>({
+            query: (id) => ({
+                url: `/Applicants/invitations?jobId=${id}`,
+                method: "Get",
+            }),
+        }),
+        getInterview: build.mutation<ApplicantInterview, SendInvitation>({
+            query: (data) => ({
+                url: `/Applicantsinvitation`,
+                method: "Post",
+                body: data,
+            }),
+        }),
     }),
 });
 
-export const { usePostJobMutation, useAllPostedJobsMutation, useRemoveJobMutation, useGetJobMutation, useGetApplicationsMutation, useGetApplicationMutation, useGetApplicationsByJobIdMutation } = recruitmentApi;
+export const {
+    usePostJobMutation,
+    useAllPostedJobsMutation,
+    useRemoveJobMutation,
+    useGetJobMutation,
+    useGetApplicationsMutation,
+    useGetApplicationMutation,
+    useGetApplicationsByJobIdMutation,
+    useSendInvitationMutation,
+    useGetInterviewsMutation,
+    useGetInterviewMutation } = recruitmentApi;

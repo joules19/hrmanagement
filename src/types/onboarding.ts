@@ -126,3 +126,33 @@ export interface JobApplication {
   coverletter: string;
   resumeFile: string;
 }
+
+export interface SendInvitation {
+  jobID: number;
+  applicantID: number;
+  meetingLink: string;
+  meetingNote: string;
+  interviewers: string[];
+  interviewDate: string; // Alternatively, you can use Date if you'll parse it as a Date object
+}
+
+export interface ApplicantInterview {
+  jobID: number;
+  applicantID: number;
+  applicantEmail: string;
+  applicatMobile: string;
+  meetingLink: string;
+  meetingNote: string;
+  fullname: string;
+  feedback: string | null;
+  interviewers: string[];
+  interviewDate: string; // You can change this to Date if needed
+  status: number;
+  statusName: string;
+  dateCreated: string; // You can change this to Date if needed
+}
+
+export interface JobApplication {
+  jobID: number;
+  applicantID: number;
+}

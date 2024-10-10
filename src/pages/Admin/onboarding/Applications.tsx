@@ -155,7 +155,7 @@ const Applications: React.FC = () => {
 
         {selectedJobPosting && (
           <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-medium mb-4">
               Applicants for {selectedJobPosting.jobTitle}
             </h2>
             {/* <div className="flex w-[200px] h-[38px] mb-4">

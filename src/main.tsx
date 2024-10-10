@@ -9,7 +9,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
-import { Dashboard } from "./pages/admin/index.ts";
 import AdminLayout from "./pages/layouts/AdminLayout.tsx";
 import EmployeeLayout from "./pages/layouts/EmployeeLayout.tsx"
 import AddEmployee from "./pages/admin/employee/AddEmployee.tsx";
@@ -42,6 +41,8 @@ import PayslipPage from "./pages/Employee/PayslipPage.tsx";
 import LeaveRequestPage from "./pages/Employee/LeaveRequestPage.tsx";
 import PerformanceReviewPage from "./pages/Employee/PerformanceReviewPage.tsx";
 import DocumentManagementPage from "./pages/Employee/DocumentManagementPage.tsx";
+import Dashboard from "./pages/Admin/Dashboard.tsx";
+import Interviews from "./pages/Admin/onboarding/Interviews.tsx";
 
 // import AddDocument from "./pages/Admin/AddDocument.tsx";
 
@@ -139,8 +140,8 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/onboarding/interview-scheduling",
-        element: <InterviewScheduling />,
+        path: "/onboarding/interviews",
+        element: <Interviews />,
         errorElement: <NotFoundPage />,
       },
       {

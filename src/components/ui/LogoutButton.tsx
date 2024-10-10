@@ -15,7 +15,7 @@ const LogoutButton: React.FC = () => {
 
     // Redirect to login page
     navigate("/");
-    message.success("You have successfully logged out");
+    message.success("Logout successful");
   };
 
   const confirmLogout = (): void => {

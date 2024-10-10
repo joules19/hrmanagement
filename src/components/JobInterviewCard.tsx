@@ -3,14 +3,13 @@ import { Card, Tooltip, Tag } from 'antd';
 import { JobPosting, JobPostingDetails } from '../types/onboarding';
 import { formatCurrencyRange } from '../utils/helperMethods';
 
-interface JobListingCardProps {
+interface JobInterviewCardProps {
   jobPosting: JobPostingDetails;
   onClick: () => void;
 }
 
-const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) => {
+const JobInterviewCard: React.FC<JobInterviewCardProps> = ({ jobPosting, onClick }) => {
   return (
-
 
     <Tooltip title={jobPosting.jobTitle}>
       <Card
@@ -21,7 +20,7 @@ const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) 
             className="ml-3 text-xs font-medium text-primary-1 hover:text-primary-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
             onClick={onClick}
           >
-            View Applicants
+            View Candidates
           </a>
         }
         style={{ width: 320, margin: "16px", borderRadius: "8px" }}
@@ -31,9 +30,9 @@ const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) 
           <p style={{ marginBottom: "6px" }}>
             <strong>Department:</strong> {jobPosting.department}
           </p>
-          <p style={{ marginBottom: "6px" }}>
+          {/* <p style={{ marginBottom: "6px" }}>
             <strong>Location:</strong> {jobPosting.companyAddress}
-          </p>
+          </p> */}
 
           {/* Conditional Tag for Status */}
           <p style={{ marginBottom: "6px" }}>
@@ -59,4 +58,4 @@ const JobListingCard: React.FC<JobListingCardProps> = ({ jobPosting, onClick }) 
   );
 };
 
-export default JobListingCard;
+export default JobInterviewCard;

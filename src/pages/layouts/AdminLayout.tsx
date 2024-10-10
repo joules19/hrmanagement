@@ -57,16 +57,6 @@ type UserNavigationItem = {
 const navigation: NavigationItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
 
-  // {
-  //   name: "Recruitments",
-  //   href: "#",
-  //   icon: UserPlusIcon,
-  //   current: false,
-  //   submenu: [
-  //     { name: "Open Positions", href: "recruitments/open" },
-  //     { name: "Interview Schedules", href: "recruitments/interviews" },
-  //   ],
-  // },
   {
     name: "Recruitment",
     href: "#",
@@ -75,7 +65,7 @@ const navigation: NavigationItem[] = [
     submenu: [
       { name: "Job Postings", href: "onboarding/job-postings" },
       { name: "Applications", href: "onboarding/applications" },
-      // { name: "Resume Parsing", href: "onboarding/resume-parsing" },
+      { name: "Interviews", href: "onboarding/interviews" },
       // { name: "Interview Scheduling", href: "onboarding/interview-scheduling" },
       //{ name: "Onboarding Workflows", href: "onboarding/onboarding-workflows" },
       { name: "Onboarding Process", href: "onboarding/onboarding-process" },

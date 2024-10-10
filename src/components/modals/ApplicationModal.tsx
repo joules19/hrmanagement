@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
-import { JobApplication } from "../../types/onboarding";
+import { JobApplication, SendInvitation } from "../../types/onboarding";
 import { Button } from "../ui/Button";
 import { formatStringToLocaleDate } from "../../utils/helperMethods";
-import { useGetApplicationMutation } from "../../store/services/recruitmentApi";
+import { useGetApplicationMutation, useSendInvitationMutation } from "../../store/services/recruitmentApi";
 import AppSpinner from "../ui/Spinner";
-import { Tag } from "antd";
-import { PlusIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { DatePicker, message, Tag } from "antd";
+import { TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import moment from "moment";
 
 interface ApplicationModalProps {
   show: boolean;
@@ -16,7 +16,6 @@ interface ApplicationModalProps {
   currentApplication: JobApplication | null;
   onSave?: (application: JobApplication) => void;
 }
-
 
 const validationSchema = Yup.object({
   meetingLink: Yup.string().url("Invalid URL").required("Meeting link is required"),
@@ -27,7 +26,7 @@ const validationSchema = Yup.object({
         .required("Email is required")
     )
     .min(1, "At least one attendant is required"),
-  meetingNotes: Yup.string().required("Meeting notes are required"),
+  meetingNotes: Yup.string(),
 });
 
 const StatusTag = ({ statusText }: { statusText: any }) => {
@@ -75,9 +74,10 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
 }) => {
   const [getJobApplication, { isLoading: isJobApplicationLoading, data: jobApplicationData }] =
     useGetApplicationMutation();
+  const [sendInvitation, { isLoading: isInvitationSending, data: invitationSent, error: invitationSendingFailed }] =
+    useSendInvitationMutation();
   const [applicationData, setApplicationData] = useState<JobApplication | null>(null);
   const [inviteModal, setInviteModal] = useState(false); // To toggle the invite modal
-  console.log(currentApplication);
 
   useEffect(() => {
     if (show && currentApplication) {
@@ -90,6 +90,17 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
       setApplicationData(jobApplicationData);
     }
   }, [jobApplicationData]);
+
+  useEffect(() => {
+
+    if (invitationSendingFailed) {
+      message.warning('Invitation not sent. Please try again.');
+    }
+    else if (invitationSent) {
+      message.success("Invite sent successfully")
+      closeInviteModal();
+    }
+  }, [invitationSent, invitationSendingFailed]);
 
   const viewResume = () => {
     if (applicationData?.resumeFile) {
@@ -122,7 +133,8 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             </button>
 
             <h3 className="text-xl font-bold mb-4">
-              {currentApplication ? "Edit Application" : "Add New Application"}
+              {"Application Details"}
+              {/* {currentApplication ? "Edit Application" : "Add New Application"} */}
             </h3>
 
             {applicationData ? (
@@ -206,14 +218,24 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             <h3 className="text-xl font-bold mb-4">Invite Candidate</h3>
 
             <Formik
-              initialValues={{ meetingLink: "", interviewAttendants: [""], meetingNotes: "" }}
+              initialValues={{ meetingLink: "", interviewAttendants: [""], meetingNotes: "", interviewDate: null }}
               validationSchema={validationSchema}
               onSubmit={(values) => {
-                console.log(values); // Handle invite submission
-                closeInviteModal(); // Close modal after submission
+                const payload: SendInvitation = {
+                  jobID: currentApplication?.jobID!,
+                  applicantID: currentApplication?.applicantID!,
+                  meetingLink: values.meetingLink,
+                  meetingNote: values.meetingNotes,
+                  interviewers: values.interviewAttendants,
+                  interviewDate: values.interviewDate
+                    ? moment(values.interviewDate).format("YYYY-MM-DD")
+                    : "",
+                };
+
+                sendInvitation(payload);
               }}
             >
-              {({ values, handleChange, handleBlur }) => (
+              {({ values, setFieldValue, handleChange, handleBlur }) => (
                 <Form>
                   <div className="space-y-4">
                     {/* Meeting Link */}
@@ -238,6 +260,18 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                       />
                       <i className="absolute left-3 top-3 text-gray-500 fa fa-sticky-note"></i>
                       <ErrorMessage name="meetingNotes" component="p" className="text-sm text-red-500" />
+                    </div>
+
+                    {/* Interview Date */}
+                    <div className="relative">
+                      <DatePicker
+                        placeholder="Interview Date"
+                        className="w-full border border-gray-300 rounded-md p-2"
+                        value={values.interviewDate ? moment(values.interviewDate) : null}
+                        onChange={(date) => setFieldValue("interviewDate", date)}
+                        onBlur={handleBlur}
+                      />
+                      <ErrorMessage name="interviewDate" component="p" className="text-sm text-red-500 mt-1" />
                     </div>
 
                     {/* Interview Attendants */}
@@ -281,6 +315,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                     {/* Submit Button */}
                     <div className="flex h-[38px] justify-end">
                       <Button
+                        loading={isInvitationSending}
                         mode={"solid"}
                         buttonText="Send Invite"
                         defaultColor="primary-1"

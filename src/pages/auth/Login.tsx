@@ -64,7 +64,7 @@ const Login: React.FC = () => {
             //   message: "Login Successful",
             //   description: "You have been successfully logged in.",
             // });
-            message.success("You have been successfully logged in");
+            message.success("Login successful");
 
             // Redirect to dashboard
             navigate("/dashboard");
