@@ -1,11 +1,11 @@
-import axios from "axios";
+import axiosInstance from "../lib/axiosInterceptor";
 import { Application } from "../types/onboarding";
 
 
 export const submitApplication = async (
     payload: Application
 ): Promise<any> => {
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<any>(async (resolve, reject) => {
         const formData = new FormData();
         formData.append("resume", payload.resume);
         formData.append("jobID", payload.jobID.toString());
@@ -17,9 +17,9 @@ export const submitApplication = async (
         formData.append("phoneNumber", payload.phoneNumber);
         formData.append("coverLetter", payload.coverLetter);
 
-        axios
+        await axiosInstance
             .post(
-                `${import.meta.env.VITE_APP_HR_BASE_URL}Applicants`,
+                `Applicants`,
                 formData
             )
             .then((res) => {
