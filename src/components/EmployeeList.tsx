@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const EmployeeList = ({ employees, onUpdateEmployee, onDeleteEmployee }) => {
+const EmployeeList = () => {
   const [editingId, setEditingId] = useState(null);
   const [editedEmployee, setEditedEmployee] = useState({});
 

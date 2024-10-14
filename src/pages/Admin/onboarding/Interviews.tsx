@@ -39,10 +39,12 @@ const Applications: React.FC = () => {
   }, [allPostedJobsData]);
 
   useEffect(() => {
-    if (selectedJobPosting?.jobID) {
-      jobInterviews(selectedJobPosting?.jobID);
+    console.log(selectedJobPosting);
+
+    if (selectedJobPosting?.id) {
+      jobInterviews(selectedJobPosting?.id);
     }
-  }, [selectedJobPosting?.jobID]);
+  }, [selectedJobPosting?.id]);
 
   useEffect(() => {
 
@@ -67,6 +69,8 @@ const Applications: React.FC = () => {
   };
 
   const handleSelectJobPosting = (jobPosting: JobPostingDetails) => {
+    console.log(jobPosting);
+
     setSelectedJobPosting(jobPosting);
   };
 
@@ -78,7 +82,7 @@ const Applications: React.FC = () => {
         <div className="flex flex-wrap justify-start">
           {allPostedJobsData != null && (allPostedJobsData!.map((jobPosting) => (
             <JobInterviewCard
-              key={jobPosting.jobID}
+              key={jobPosting.id}
               jobPosting={jobPosting as FullJobPosting}
               onClick={() => handleSelectJobPosting(jobPosting)}
             />

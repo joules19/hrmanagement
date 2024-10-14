@@ -8,70 +8,6 @@ import { Button } from "../../../components/ui/Button";
 import { JobPostingDetails as FullJobPosting } from "../../../types/onboarding";
 import { useAllPostedJobsMutation, useGetApplicationsByJobIdMutation, useGetApplicationsMutation } from "../../../store/services/recruitmentApi";
 
-
-// // Mock data for job postings
-// const mockJobPostings: JobPosting[] = [
-//   {
-//     id: 1,
-//     title: "Software Engineer",
-//     department: "Engineering",
-//     location: "New York",
-//     status: "Open",
-//     salaryMin: "80000",
-//     salaryMax: "120000",
-//   },
-//   {
-//     id: 2,
-//     title: "Product Manager",
-//     department: "Product",
-//     location: "San Francisco",
-//     status: "Open",
-//     salaryMin: "100000",
-//     salaryMax: "150000",
-//   },
-//   {
-//     id: 3,
-//     title: "UX Designer",
-//     department: "Design",
-//     location: "Remote",
-//     status: "Open",
-//     salaryMin: "70000",
-//     salaryMax: "110000",
-//   },
-// ];
-
-// // Mock data for applications
-// const mockApplications: Application[] = [
-//   {
-//     id: 1,
-//     applicantName: "John Doe",
-//     position: "Software Engineer",
-//     status: "Applied",
-//     dateApplied: "2023-05-01",
-//   },
-//   {
-//     id: 2,
-//     applicantName: "Jane Smith",
-//     position: "Software Engineer",
-//     status: "Screening",
-//     dateApplied: "2023-05-02",
-//   },
-//   {
-//     id: 3,
-//     applicantName: "Bob Johnson",
-//     position: "Product Manager",
-//     status: "Interview",
-//     dateApplied: "2023-05-03",
-//   },
-//   {
-//     id: 4,
-//     applicantName: "Alice Brown",
-//     position: "UX Designer",
-//     status: "Applied",
-//     dateApplied: "2023-05-04",
-//   },
-// ];
-
 const Applications: React.FC = () => {
   const [jobPostings] = useState<JobPostingDetails[]>();
   const [selectedJobPosting, setSelectedJobPosting] = useState<JobPostingDetails | null>(null);
@@ -81,14 +17,11 @@ const Applications: React.FC = () => {
   const [allPostedJobs, { isLoading: isAllPostedJobsLoading, data: allPostedJobsData }] = useAllPostedJobsMutation();
   const [jobApplications, { isLoading: isJobApplicationsLoading, data: allJobApplicationsData }] = useGetApplicationsByJobIdMutation();
   const [jobListings, setJobListings] = useState<any>();
-  const [currentJobId, setCurrentJobId] = useState<number>();
-
-
+  const [currentid, setCurrentid] = useState<number>();
 
   useEffect(() => {
     allPostedJobs("");
   }, [allPostedJobs]);
-
 
   useEffect(() => {
     if (allPostedJobsData) {
@@ -106,11 +39,11 @@ const Applications: React.FC = () => {
   }, [allPostedJobsData]);
 
   useEffect(() => {
-    if (selectedJobPosting?.jobID) {
-      jobApplications(selectedJobPosting?.jobID);
+    if (selectedJobPosting?.id) {
+      jobApplications(selectedJobPosting?.id);
 
     }
-  }, [selectedJobPosting?.jobID]);
+  }, [selectedJobPosting?.id]);
 
   useEffect(() => {
 
@@ -131,7 +64,7 @@ const Applications: React.FC = () => {
   };
 
   const handleDeleteApplication = (id: number) => {
-    setApplications(applications!.filter((app) => app.jobID !== id));
+    setApplications(applications!.filter((app) => app.applicantID !== id));
   };
 
   const handleSelectJobPosting = (jobPosting: JobPostingDetails) => {
@@ -146,7 +79,7 @@ const Applications: React.FC = () => {
         <div className="flex flex-wrap justify-start">
           {allPostedJobsData != null && (allPostedJobsData!.map((jobPosting) => (
             <JobListingCard
-              key={jobPosting.jobID}
+              key={jobPosting.id}
               jobPosting={jobPosting as FullJobPosting}
               onClick={() => handleSelectJobPosting(jobPosting)}
             />

@@ -157,7 +157,7 @@ const JobDetails: React.FC = () => {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const payload: Application = {
-      jobID: job?.jobID!,
+      jobID: job?.id!,
       resume: resume!,
       firstName: values.name,
       lastName: values.name,
@@ -210,13 +210,13 @@ const JobDetails: React.FC = () => {
             <Divider />
             <Row gutter={[16, 16]}>
               <Col>
-                <Tag color="blue" icon={<FaBriefcase />} className="mb-2">
-                  {job?.jobMode}
+                <Tag color="yellow" icon={<FaBriefcase />} className="mb-2">
+                  {job?.jobModeName}
                 </Tag>
               </Col>
               <Col>
-                <Tag color="yellow" icon={<FaBriefcase />} className="mb-2">
-                  {job?.workMode}
+                <Tag color="blue" icon={<FaBriefcase />} className="mb-2">
+                  {job?.workModeName}
                 </Tag>
               </Col>
               <Col>
@@ -230,7 +230,7 @@ const JobDetails: React.FC = () => {
                 </Tag>
               </Col>
               <Col>
-                <Tag color="gold" className="mb-2">
+                <Tag color="gold" className="mb-2 font-medium">
                   {formatCurrencyRange(job?.minSalaryRange, job?.maxSalaryRange)}
                 </Tag>
               </Col>

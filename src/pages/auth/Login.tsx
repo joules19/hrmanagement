@@ -34,23 +34,26 @@ const Login: React.FC = () => {
       setIsLoading(true);
 
       try {
-        // Simulate a login API call
+        const baseUrl = `${import.meta.env.VITE_APP_HR_BASE_URL}`;
         const response = await axios.post(
-          "https://fha-app-api-uu9ty.ondigitalocean.app/api/v1/auth/customer/login",
+          `${baseUrl}auth/login`,
           {
             ...values,
             isAdmin: loginAsAdmin,
           }
         );
-        if (response.status === 201) {
+        if (response.status === 200) {
           // Delay the session creation for 200ms after successful login
 
           setTimeout(() => {
             const userDetails = {
-              email: response.data.user.email,
-              token: response.data.token.accessToken,
-              firstname: response.data.user.firstname,
-              lastname: response.data.user.lastname,
+              email: response?.data?.user.email,
+              token: response?.data?.token,
+              refreshToken: response?.data?.token,
+              firstname: response?.data?.user.firstName,
+              lastname: response?.data?.user.lastName,
+              role: response?.data?.user.role,
+              initialSetup: response?.data?.user.initialSetup
               // Any other details you might want to store
             };
 

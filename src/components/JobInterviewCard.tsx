@@ -28,7 +28,7 @@ const JobInterviewCard: React.FC<JobInterviewCardProps> = ({ jobPosting, onClick
       >
         <div style={{ marginBottom: "12px" }}>
           <p style={{ marginBottom: "6px" }}>
-            <strong>Department:</strong> {jobPosting.department}
+            <strong>Department:</strong> {jobPosting.departmentId}
           </p>
           {/* <p style={{ marginBottom: "6px" }}>
             <strong>Location:</strong> {jobPosting.companyAddress}

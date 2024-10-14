@@ -79,7 +79,7 @@ const navigation: NavigationItem[] = [
     submenu: [
       { name: "All Employees", href: "/employees/all" },
       { name: "Add Employee", href: "/employees/add" },
-      { name: "Job History", href: "/employees/job-history" },
+      // { name: "Job History", href: "/employees/job-history" },
       { name: "Documents", href: "/employees/documents" },
     ],
   },

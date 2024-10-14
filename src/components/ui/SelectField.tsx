@@ -5,7 +5,7 @@ interface SelectFieldProps {
   id: string;
   name: string;
   value: string;
-  options: string[];
+  options: { value: string; label: string }[]; // Update to accept array of objects
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void;
   required?: boolean;
@@ -42,16 +42,15 @@ const SelectField: React.FC<SelectFieldProps> = ({
           onBlur={onBlur}
           required={required}
           disabled={disabled}
-          className={`block w-full border-[.8px] ${
-            error ? "border-red-500" : "border-gray-300"
-          }  py-2 px-3 pr-8 shadow-sm flex-grow mr-2 p-2 border-[.8px] border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-1 focus:ring-primary-500 focus:border-primary-500`}
+          className={`block w-full border-[.8px] ${error ? "border-red-500" : "border-gray-300"
+            } py-2 px-3 pr-8 shadow-sm flex-grow mr-2 p-2 border-[.8px] border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-1 focus:ring-primary-500 focus:border-primary-500`}
         >
           <option value="" disabled>
             Select {label}
           </option>
           {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>

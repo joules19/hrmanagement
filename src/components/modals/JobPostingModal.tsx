@@ -13,7 +13,13 @@ import {
 import { JobPosting, JobPostingDetails } from "../../types/onboarding";
 import { usePostJobMutation } from "../../store/services/recruitmentApi";
 import { message } from "antd";
+import { useGetDepartmentsQuery } from "../../store/services/setupApi";
 
+const JobModes =
+  [{ value: "1", label: "Full-time" }, { value: "2", label: "Part-time" }, { value: "3", label: "Internship" }]
+
+const WorkModes =
+  [{ value: "1", label: "Onsite" }, { value: "2", label: "Remote" }, { value: "3", label: "Hybrid" }]
 
 interface JobPostingModalProps {
   show: boolean;
@@ -30,6 +36,21 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [postJob, { isLoading: isJobPosting, data: postJobSuccess, error: postJobFailure }] = usePostJobMutation();
+  const { data: departments, isLoading: loadingDepartments } = useGetDepartmentsQuery(undefined);
+
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+
+  // Populate department options once departments are fetched
+  useEffect(() => {
+
+    if (departments) {
+      const options = departments.map((dept: { id: string; name: string }) => ({
+        value: dept.id,
+        label: dept.name,
+      }));
+      setDepartmentOptions(options);
+    }
+  }, [departments]);
 
   useEffect(() => {
     if (postJobSuccess) {
@@ -49,7 +70,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
   const formik = useFormik<JobPostingDetails>({
     initialValues: {
       jobTitle: currentPosting?.jobTitle || "",
-      department: currentPosting?.department || "",
+      departmentId: currentPosting?.departmentId || "",
       companyAddress: currentPosting?.companyAddress || "",
       description: currentPosting?.description || "",
       qualifications: currentPosting?.qualifications || [""],
@@ -65,7 +86,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
     },
     validationSchema: Yup.object({
       jobTitle: Yup.string().required("Job Title is required"),
-      department: Yup.string().required("Department is required"),
+      departmentId: Yup.string().required("Department is required"),
       companyAddress: Yup.string().required("Company Address is required"),
       description: Yup.string().required("Description is required"),
       qualifications: Yup.array()
@@ -93,7 +114,8 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
     onSubmit: (values) => {
       const newPosting: JobPostingDetails = {
         ...values,
-        jobCode: "",
+        jobMode: parseInt(values.jobMode.toString()),
+        workMode: parseInt(values.workMode.toString()),
         qualifications: values.qualifications.filter((q) => q.trim() !== ""),
         responsibilities: values.responsibilities.filter((r) => r.trim() !== ""),
         benefits: values.benefits.filter((b) => b.trim() !== ""),
@@ -180,15 +202,16 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 required
                 error={formik.touched.jobTitle && formik.errors.jobTitle}
               />
-              <InputField
+              <SelectField
                 label="Department"
-                id="department"
-                name="department"
-                value={formik.values.department}
+                id="departmentId"
+                name="departmentId"
+                value={formik.values.departmentId}
+                options={departmentOptions}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
-                error={formik.touched.department && formik.errors.department}
+                error={formik.touched.departmentId && formik.errors.departmentId}
               />
               <InputField
                 label="Company Address"
@@ -241,19 +264,20 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 label="Job Type"
                 id="jobMode"
                 name="jobMode"
-                value={formik.values.jobMode}
-                options={["Full-time", "Part-time", "Internship"]}
+                value={formik.values.jobMode.toString()}
+                options={WorkModes}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
                 error={formik.touched.jobMode && formik.errors.jobMode}
+
               />
               <SelectField
                 label="Work Location Type"
                 id="workMode"
                 name="workMode"
-                value={formik.values.workMode}
-                options={["Onsite", "Remote", "Hybrid"]}
+                value={formik.values.workMode.toString()}
+                options={JobModes}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
@@ -277,28 +301,7 @@ const JobPostingModal: React.FC<JobPostingModalProps> = ({
                 formik.values.benefits,
                 "Benefits"
               )}
-              {/* <SelectField
-                label="Status"
-                id="status"
-                name="status"
-                value={formik.values.status}
-                options={["Open", "Closed", "On Hold"]}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                required
-                error={formik.touched.status && formik.errors.status}
-              /> */}
-              {/* <InputField
-                label="Posted Date"
-                id="postingDate"
-                name="postingDate"
-                type="date"
-                value={formik.values.postingDate}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                required
-                error={formik.touched.postingDate && formik.errors.postingDate}
-              /> */}
+
               <div className="flex justify-end space-x-2 mt-4">
                 <div className="flex gap-2 w-[308px] h-[38px]">
                   <div className="flex flex-1">

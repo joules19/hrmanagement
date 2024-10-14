@@ -1,13 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addTokenToRequest } from "../../lib/token";
 import { ApplicantInterview, Application, JobApplication, JobApplications, JobPosting, JobPostingDetails, SendInvitation } from "../../types/onboarding";
+import { getSession } from "../../utils/sessionManager";
 
 export const recruitmentApi = createApi({
     reducerPath: "recruitmentApi",
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_APP_HR_BASE_URL}`,
         prepareHeaders: (headers, { getState }: any) => {
-            return addTokenToRequest(headers, { getState });
+            const user = getSession();
+            // Call your function to add the Bearer token to the headers
+            const token = user.token; // Assuming token is stored in auth slice of state
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
+            return headers;
         },
     }),
     tagTypes: ["recruitment"],
@@ -75,6 +82,7 @@ export const recruitmentApi = createApi({
                 body: data,
             }),
         }),
+
     }),
 });
 

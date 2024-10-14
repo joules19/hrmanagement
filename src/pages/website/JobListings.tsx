@@ -42,8 +42,8 @@ const JobListings: React.FC = () => {
           {jobListings != undefined && (
             jobListings.map((job: JobPostingDetails) => (
               <div
-                onClick={() => navigate(`/job-listing/${job.jobID}`)}
-                key={job.jobID}
+                onClick={() => navigate(`/job-listing/${job.id}`)}
+                key={job.id}
                 className="bg-white rounded-lg shadow-md p-6  hover:shadow-lg transition-shadow cursor-pointer"
               >
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">{job.jobTitle}</h2>
@@ -52,7 +52,7 @@ const JobListings: React.FC = () => {
 
                   {/* Work mode tag (rounded Ant Design Tag) */}
                   <Tag className="" color="blue" style={{ borderRadius: '9999px' }}>
-                    {job.workMode}
+                    {job.workModeName}
                   </Tag>
                 </div>
 

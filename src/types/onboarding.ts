@@ -17,9 +17,9 @@ export interface JobPosting {
 }
 
 export interface JobPostingDetails {
-  jobID?: number;
+  id?: string;
   jobTitle: string;
-  department: string;
+  departmentId: string;
   companyAddress: string;
   description: string;
   qualifications: string[];
@@ -29,13 +29,15 @@ export interface JobPostingDetails {
   postingDate: string;
   minSalaryRange: string;
   maxSalaryRange: string;
-  jobMode: string;
+  jobMode: string | number;
   jobCode?: string;
-  workMode: string;
+  workMode: string | number;
+  jobModeName?: string;
+  workModeName?: string;
 }
 
 export interface Application {
-  jobID: number;
+  jobID: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -111,7 +113,7 @@ export interface JobApplications {
 }
 
 export interface JobApplication {
-  applicantID: number;
+  id: number;
   jobID: number;
   firstName: string;
   lastName: string;

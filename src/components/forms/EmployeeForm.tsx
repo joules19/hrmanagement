@@ -1,47 +1,80 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputField from "../ui/InputField";
 import FileInput from "../ui/FileInput";
 import SelectField from "../ui/SelectField";
 import { Button } from "../ui/Button";
-import axios from "axios"; // Axios for making API requests
+import axios, { Axios, AxiosError } from "axios"; // Axios for making API requests
 import { toast } from "sonner";
-import { Alert } from "antd";
-import { useLoginMutation } from "../../store/services/authApi";
+import { Alert, message } from "antd";
+import axiosInstance from "../../lib/axiosInterceptor";
+import { Employee } from "../../types/Employee";
 
-const positions = ["Manager", "Developer", "Designer", "QA", "HR"];
-const departments = ["Engineering", "Marketing", "Sales", "HR"];
-const states = ["California", "Texas", "New York", "Florida"];
-const lgas = ["LGA1", "LGA2", "LGA3", "LGA4"];
 
-interface Employee {
-  name: string;
-  position: string;
-  department: string;
-  email: string;
-  phone: string;
-  dob: string;
-  address: string;
-  state: string;
-  lga: string;
-  passport: File | null;
-  resume: File | null;
-}
 
 const EmployeeForm: React.FC = () => {
+  const [positions, setPositions] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [states, setStates] = useState([]);
+  const [lgas, setLgas] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [login, { data: verifyEmailData }] = useLoginMutation();
 
+  // Fetch positions, departments, and states on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [positionsRes, departmentsRes, statesRes] = await Promise.allSettled([
+          axiosInstance.get("setups/positions"),        // Fetch positions
+          axiosInstance.get("setups/departments"), // Fetch departments
+          axiosInstance.get("setups/states"),      // Fetch states
+        ]);
+
+        // Check if each result is fulfilled before accessing data
+        if (positionsRes.status === "fulfilled") {
+          setPositions(positionsRes.value.data); // Access value.data when fulfilled
+        } else {
+        }
+
+        if (departmentsRes.status === "fulfilled") {
+          setDepartments(departmentsRes.value.data);
+        } else {
+        }
+
+        if (statesRes.status === "fulfilled") {
+          setStates(statesRes.value.data);
+        } else {
+        }
+      } catch (error) {
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  // Fetch LGAs when a state is selected
+  const handleStateChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStateCode = e.target.value;
+    formik.setFieldValue("state", selectedStateCode);
+
+    try {
+      const response = await axiosInstance.get(`setups/lga-by-state-code?stateCode=${selectedStateCode}`);
+      setLgas(response.data);
+    } catch (error) {
+    }
+  };
   // Formik setup
   const formik = useFormik<Employee>({
     initialValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       position: "",
       department: "",
       email: "",
       phone: "",
       dob: "",
+      hireDate: "",
       address: "",
       state: "",
       lga: "",
@@ -49,7 +82,8 @@ const EmployeeForm: React.FC = () => {
       resume: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Name is required"),
+      firstName: Yup.string().required("FirstName is required"),
+      lastName: Yup.string().required("LastName is required"),
       position: Yup.string().required("Position is required"),
       department: Yup.string().required("Department is required"),
       email: Yup.string()
@@ -61,11 +95,56 @@ const EmployeeForm: React.FC = () => {
       ),
       // .required("Phone is required")
       dob: Yup.date().required("Date of Birth is required"),
+      hireDate: Yup.date().required("Hire date is required"),
       address: Yup.string().required("Address is required"),
       state: Yup.string().required("State is required"),
       lga: Yup.string().required("LGA is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      console.log(values);
+
+      const formData = new FormData();
+
+      // Append fields to formData
+      formData.append("firstName", values.firstName);
+      formData.append("lastName", values.lastName);
+      formData.append("positionId", values.position);
+      formData.append("departmentId", values.department);
+      formData.append("email", values.email);
+      formData.append("phoneNumber", values.phone);
+      formData.append("dob", values.dob.toString());
+      formData.append("hireDate", values.hireDate.toString());
+      formData.append("address", values.address);
+      formData.append("stateCode", values.state);
+      formData.append("lgaId", values.lga);
+
+      // Append files
+      if (values.passport) {
+        formData.append("passport", values.passport);  // Append passport file
+      }
+      if (values.resume) {
+        formData.append("resume", values.resume);  // Append resume file
+      }
+
+      setIsLoading(true);  // Show loading indicator
+      try {
+        // Make the API call
+        const response = await axiosInstance.post("employees/create-employee", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",  // Important for file uploads
+          },
+        });
+
+        // Success notification and further actions
+        message.success("Employee created successfully");
+
+        // Optionally reset the form after successful submission
+        formik.resetForm();
+      } catch (error: AxiosError | any) {
+        message.error(error.response.data.message);
+      } finally {
+        setIsLoading(false);  // Hide loading indicator
+      }
     },
   });
 
@@ -81,12 +160,11 @@ const EmployeeForm: React.FC = () => {
       // Create a form data object
       const formData = new FormData();
       formData.append("file", file);
-      await login(formData);
 
       try {
         // Call the API endpoint
         const response = await axios.post(
-          "https://odoobros.pythonanywhere.com/api/extract-info/",
+          "http://localhost:8000/api/extract-info/",
           formData,
           {
             headers: {
@@ -127,21 +205,31 @@ const EmployeeForm: React.FC = () => {
         {/* Left column */}
         <div className="w-full md:w-1/2 px-3 mb-6">
           <InputField
-            label="Name"
-            id="name"
-            name="name"
-            value={formik.values.name}
+            label="FirstName"
+            id="firstName"
+            name="firstName"
+            value={formik.values.firstName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required
-            error={formik.touched.name && formik.errors.name}
+            error={formik.touched.firstName && formik.errors.firstName}
+          />
+          <InputField
+            label="LastName"
+            id="lastName"
+            name="lastName"
+            value={formik.values.lastName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            required
+            error={formik.touched.lastName && formik.errors.lastName}
           />
           <SelectField
             label="Position"
             id="position"
             name="position"
             value={formik.values.position}
-            options={positions}
+            options={positions.map((pos: any) => ({ label: pos.name, value: pos.id }))}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required
@@ -152,7 +240,10 @@ const EmployeeForm: React.FC = () => {
             id="department"
             name="department"
             value={formik.values.department}
-            options={departments}
+            options={departments.map((dept: any) => ({
+              label: dept.name,
+              value: dept.id,
+            }))}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required
@@ -209,10 +300,10 @@ const EmployeeForm: React.FC = () => {
             id="state"
             name="state"
             value={formik.values.state}
-            options={states}
-            onChange={formik.handleChange}
+            options={states.map((state: any) => ({ label: state.name, value: state.stateCode }))}
+            onChange={handleStateChange}
             onBlur={formik.handleBlur}
-            // required
+            required
             error={formik.touched.state && formik.errors.state}
           />
           <SelectField
@@ -220,7 +311,7 @@ const EmployeeForm: React.FC = () => {
             id="lga"
             name="lga"
             value={formik.values.lga}
-            options={lgas}
+            options={lgas.map((lga: any) => ({ label: lga.name, value: lga.id }))}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required
@@ -252,6 +343,17 @@ const EmployeeForm: React.FC = () => {
               onChange={handleResumeUpload}
               required
               error={formik.touched.resume && formik.errors.resume}
+            />
+            <InputField
+              label="Hire Date"
+              id="hireDate"
+              name="hireDate"
+              type="date"
+              value={formik.values.hireDate}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              required
+              error={formik.touched.hireDate && formik.errors.hireDate}
             />
           </div>
         </div>

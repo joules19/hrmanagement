@@ -55,14 +55,14 @@ const JobPostingTable: React.FC = () => {
     },
     {
       title: "Department",
-      dataIndex: "department",
+      dataIndex: "departmentName",
       width: "20%",
       filters: [
         { text: "Engineering", value: "Engineering" },
         { text: "Human Resources", value: "Human Resources" },
         { text: "Marketing", value: "Marketing" },
       ],
-      onFilter: (value, record) => record.department.includes(value as string),
+      onFilter: (value, record) => record.departmentId.includes(value as string),
     },
     {
       title: "Status",
@@ -111,7 +111,7 @@ const JobPostingTable: React.FC = () => {
           </button>
           <button
             className="text-red-500 py-1 px-2 rounded"
-            onClick={() => removeJob(record.jobID!)}
+            onClick={() => removeJob(record.id!)}
           >
             <TrashIcon className="w-4 h-4" />
           </button>

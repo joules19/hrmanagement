@@ -81,7 +81,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
 
   useEffect(() => {
     if (show && currentApplication) {
-      getJobApplication(currentApplication?.applicantID);
+      getJobApplication(currentApplication?.id);
     }
   }, [show, currentApplication, getJobApplication]);
 
@@ -92,14 +92,21 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
   }, [jobApplicationData]);
 
   useEffect(() => {
-
     if (invitationSendingFailed) {
+      const { status, data } = invitationSendingFailed;
+      // You can now access `status` and `data.message`
+      if (status === 409) {
+        message.warning(data.message);
+        return;
+      }
+
       message.warning('Invitation not sent. Please try again.');
     }
     else if (invitationSent) {
       message.success("Invite sent successfully")
       closeInviteModal();
     }
+
   }, [invitationSent, invitationSendingFailed]);
 
   const viewResume = () => {
@@ -223,7 +230,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
               onSubmit={(values) => {
                 const payload: SendInvitation = {
                   jobID: currentApplication?.jobID!,
-                  applicantID: currentApplication?.applicantID!,
+                  applicantID: currentApplication?.id!,
                   meetingLink: values.meetingLink,
                   meetingNote: values.meetingNotes,
                   interviewers: values.interviewAttendants,
