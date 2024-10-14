@@ -15,3 +15,9 @@ export interface SetupModel {
     defaultCurrency: string;
     workweekDays: string;
 }
+
+export interface Summary {
+    departmentCount: number;
+    employeeCount: number;
+    totalExpense: number;
+}

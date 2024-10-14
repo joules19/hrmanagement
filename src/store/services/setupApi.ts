@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addTokenToRequest } from "../../lib/token";
-import { SetupModel } from "../../types/setup";
+import { SetupModel, Summary } from "../../types/setup";
 import { getSession } from "../../utils/sessionManager";
 
 export const setupApi = createApi({
@@ -31,8 +31,12 @@ export const setupApi = createApi({
       query: () => 'setups/departments',
     }),
 
+    getSummary: build.query<Summary, any>({
+      query: () => 'setups/summary',
+    }),
+
 
   }),
 });
 
-export const { useSetupMutation, useGetDepartmentsQuery } = setupApi;
+export const { useSetupMutation, useGetDepartmentsQuery, useGetSummaryQuery } = setupApi;

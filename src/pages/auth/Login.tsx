@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { createSession } from "../../utils/sessionManager";
+import { Navigate, replace, useNavigate } from "react-router-dom";
+import { createSession, getSession } from "../../utils/sessionManager";
 import { message, notification } from "antd";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/ui/Button";
 import { Radio } from "antd";
+import { ApplicationRoles } from "../../enums/ApplicationRoles";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -45,7 +46,7 @@ const Login: React.FC = () => {
         if (response.status === 200) {
           // Delay the session creation for 200ms after successful login
 
-          setTimeout(() => {
+          setTimeout(async () => {
             const userDetails = {
               email: response?.data?.user.email,
               token: response?.data?.token,
@@ -69,8 +70,18 @@ const Login: React.FC = () => {
             // });
             message.success("Login successful");
 
-            // Redirect to dashboard
-            navigate("/dashboard");
+            var user = await getSession();
+            if (user.role === ApplicationRoles.Administrator) {
+              // Redirect to admin dashboard
+              return <Navigate to="dashboard" replace />;
+            }
+
+            else if (user.role === ApplicationRoles.Employee) {
+              // Redirect to employee dashboard
+              return <Navigate to="/employee/dashboard" replace />;
+            }
+
+
           }, 200); // 200ms delay
         }
       } catch (err) {

@@ -156,6 +156,41 @@ export function formatStringToDate(dateTimeString: string) {
   return `${dateObj.toDateString()}`;
 }
 
+export function calculateAge(dateString: string): number {
+  // Parse the input date string into a Date object
+  const birthDate = new Date(dateString);
+
+  // Get the current date
+  const today = new Date();
+
+  // Calculate the age difference in years
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  // Adjust the age if the birthdate hasn't occurred yet this year
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  const dayDiff = today.getDate() - birthDate.getDate();
+
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    age--;
+  }
+
+  if (age < 1) return 1
+  return age;
+}
+
+export const capitalizeFirstLetter = (str: string): string => {
+  if (!str) return str; // Handle empty strings
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
+export const capitalizeFirstLetterOfEachWord = (str: string): string => {
+  if (!str) return str; // Handle empty strings
+  return str
+    .split(' ') // Split the string into an array of words
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize first letter of each word
+    .join(' '); // Join the array back into a string
+};
+
 export function formatDateTime(
   dateTimeString: any,
   formatString = "yyyy-MM-dd HH:mm:ss"
@@ -164,7 +199,6 @@ export function formatDateTime(
 
   if (isNaN(date.getTime())) {
     // Handle invalid date string (optional)
-    console.error("Invalid datetime string provided:", dateTimeString);
     return ""; // Or return a default value
   }
 

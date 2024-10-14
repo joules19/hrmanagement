@@ -1,35 +1,22 @@
 import React from "react";
-import { Table } from "antd";
+import { Table, Tag, Spin } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
+import { EmployeeDetails } from "../../types/Employee";
+import { calculateAge, capitalizeFirstLetterOfEachWord } from "../../utils/helperMethods";
+import { useGetEmployeesQuery } from "../../store/services/employeeApi";
 
-interface EmployeeData {
-  key: React.Key;
-  name: string;
-  age: number;
-  position: string;
-  department: string;
-  address: string;
-  hireDate: string;
-  status: string;
-}
-
-const columns: TableColumnsType<EmployeeData> = [
+const columns: TableColumnsType<EmployeeDetails> = [
   {
     title: "Name",
     dataIndex: "name",
-    filters: [
-      { text: "Alice Johnson", value: "Alice Johnson" },
-      { text: "Bob Smith", value: "Bob Smith" },
-      { text: "Charlie Brown", value: "Charlie Brown" },
-    ],
     filterSearch: true,
-    onFilter: (value, record) => record.name.includes(value as string),
+    onFilter: (value, record) => record.firstName!.includes(value as string),
     width: "20%",
   },
   {
     title: "Age",
     dataIndex: "age",
-    sorter: (a, b) => a.age - b.age,
+    sorter: (a, b) => calculateAge(a.dob!) - calculateAge(b.dob!),
     width: "10%",
   },
   {
@@ -40,7 +27,7 @@ const columns: TableColumnsType<EmployeeData> = [
       { text: "Software Engineer", value: "Software Engineer" },
       { text: "HR Specialist", value: "HR Specialist" },
     ],
-    onFilter: (value, record) => record.position.includes(value as string),
+    onFilter: (value, record) => record.position!.includes(value as string),
     filterSearch: true,
     width: "15%",
   },
@@ -52,15 +39,14 @@ const columns: TableColumnsType<EmployeeData> = [
       { text: "Human Resources", value: "Human Resources" },
       { text: "Marketing", value: "Marketing" },
     ],
-    onFilter: (value, record) => record.department.includes(value as string),
+    onFilter: (value, record) => record.department!.includes(value as string),
     width: "15%",
   },
-
   {
     title: "Hire Date",
     dataIndex: "hireDate",
     sorter: (a, b) =>
-      new Date(a.hireDate).getTime() - new Date(b.hireDate).getTime(),
+      new Date(a.hireDate!).getTime() - new Date(b.hireDate!).getTime(),
     width: "10%",
   },
   {
@@ -71,61 +57,57 @@ const columns: TableColumnsType<EmployeeData> = [
       { text: "On Leave", value: "On Leave" },
       { text: "Resigned", value: "Resigned" },
     ],
-    onFilter: (value, record) => record.status.includes(value as string),
+    onFilter: (value, record) => record.status!.includes(value as string),
     width: "10%",
+    render: (status) => {
+      let color = "green"; // Default color for "Active"
+      if (status === "On Leave") {
+        color = "orange";
+      } else if (status === "Resigned") {
+        color = "red";
+      }
+      return <Tag color={color}>{status}</Tag>;
+    },
   },
 ];
 
-const data: EmployeeData[] = [
-  {
-    key: "1",
-    name: "Alice Johnson",
-    age: 29,
-    position: "Software Engineer",
-    department: "Engineering",
-    address: "San Francisco, CA",
-    hireDate: "2018-06-01",
-    status: "Active",
-  },
-  {
-    key: "2",
-    name: "Bob Smith",
-    age: 45,
-    position: "Manager",
-    department: "Marketing",
-    address: "New York, NY",
-    hireDate: "2010-09-15",
-    status: "Active",
-  },
-  {
-    key: "3",
-    name: "Charlie Brown",
-    age: 37,
-    position: "HR Specialist",
-    department: "Human Resources",
-    address: "London, UK",
-    hireDate: "2015-04-22",
-    status: "On Leave",
-  },
-];
-
-const onChange: TableProps<EmployeeData>["onChange"] = (
+const onChange: TableProps<EmployeeDetails>["onChange"] = (
   pagination,
   filters,
   sorter,
   extra
 ) => {
+  console.log("params", pagination, filters, sorter, extra);
 };
 
-const App: React.FC = () => (
-  <div className="w-full">
-    <Table
-      scroll={{ x: 600 }}
-      columns={columns}
-      dataSource={data}
-      onChange={onChange}
-    />
-  </div>
-);
+const EmployeeListTable: React.FC = () => {
+  const { data, error, isLoading } = useGetEmployeesQuery(undefined);
 
-export default App;
+  // if (isLoading) return <Spin />; // Display Ant Design's default spinner
+  if (error) return <div>Error loading data</div>;
+
+  const employeeData = data?.map((employee: EmployeeDetails, index: any) => ({
+    key: employee.id,
+    name: capitalizeFirstLetterOfEachWord(`${employee.firstName} ${employee.lastName}`),
+    age: calculateAge(employee.dob!),
+    position: employee.position || "N/A",
+    department: employee.department || "N/A",
+    address: employee.address || "N/A",
+    hireDate: new Date(employee.hireDate!).toLocaleDateString(),
+    status: employee.status || "Active", // Assume status is active unless specified
+  }));
+
+  return (
+    <div className="w-full">
+      <Table
+        scroll={{ x: 600 }}
+        columns={columns}
+        dataSource={employeeData}
+        onChange={onChange}
+        loading={isLoading}
+      />
+    </div>
+  );
+};
+
+export default EmployeeListTable;

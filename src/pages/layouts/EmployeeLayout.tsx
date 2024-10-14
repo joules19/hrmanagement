@@ -1,17 +1,3 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
@@ -59,18 +45,15 @@ type UserNavigationItem = {
 };
 
 const navigation: NavigationItem[] = [
-  { name: "Employee Dashboard", href: "/employee-dashboard", icon: HomeIcon, current: false },
-  { name: "My Profile", href: "/employee-profile", icon: UsersIcon, current: false },
-  { name: "Payslips", href: "/employee-payslips", icon: DocumentTextIcon, current: false },
-  { name: "Leave Requests", href: "/employee-leave-requests", icon: CalendarIcon, current: false },
-  { name: "Performance", href: "/employee-performance", icon: ChartBarIcon, current: false },
-  { name: "Document Management", href: "/employee-document-management", icon: PaperClipIcon, current: false },
-  // { name: "Jobs", href: "/employee-jobs", icon: BriefcaseIcon, current: false }
+  { name: "Employee Dashboard", href: "/employee/dashboard", icon: HomeIcon, current: false },
+  { name: "My Profile", href: "/employee/profile", icon: UsersIcon, current: false },
+  { name: "Payslips", href: "/employee/payslips", icon: DocumentTextIcon, current: false },
+  { name: "Leave Requests", href: "/employee/leave-requests", icon: CalendarIcon, current: false },
+  { name: "Performance", href: "/employee/performance", icon: ChartBarIcon, current: false },
+  { name: "Document Management", href: "/employee/document-management", icon: PaperClipIcon, current: false },
 ];
 
 const userNavigation: UserNavigationItem[] = [
-  // { name: "Your Profile", href: "#" },
-  // { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 

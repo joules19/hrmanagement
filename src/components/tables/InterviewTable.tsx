@@ -3,7 +3,6 @@ import { Table, Tag } from "antd";
 import type { TableColumnsType } from "antd";
 import { ApplicantInterview, JobApplications } from "../../types/onboarding";
 import { EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { formatStringToDate } from "../../utils/helperMethods";
 
 interface InterviewTableProps {
   interviews: ApplicantInterview[];

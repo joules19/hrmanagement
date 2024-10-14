@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getSession } from "../../utils/sessionManager";
-import { Employee } from "../../types/Employee";
+import { Employee, EmployeeDetails } from "../../types/Employee";
 
 export const employeeApi = createApi({
   reducerPath: "employeeApi",
@@ -30,7 +30,7 @@ export const employeeApi = createApi({
       query: (id) => `employees/${id}`,
     }),
 
-    getEmployees: build.query({
+    getEmployees: build.query<EmployeeDetails[], any>({
       query: () => `employees`,
     }),
   }),

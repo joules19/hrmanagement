@@ -184,7 +184,7 @@ export const router = createBrowserRouter([
         element: <EmployeeLayout />,
         children: [
             {
-                path: "/employee-dashboard",
+                path: "/employee/dashboard",
                 element: (
                     <PrivateRoute><AuthMiddleware>
                         <EmployeeDashboard />
@@ -193,27 +193,27 @@ export const router = createBrowserRouter([
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee-profile",
+                path: "/employee/profile",
                 element: <EmployeeProfile />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee-payslips",
+                path: "/employee/payslips",
                 element: <PayslipPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee-leave-requests",
+                path: "/employee/leave-requests",
                 element: <LeaveRequestPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee-performance",
+                path: "/employee/performance",
                 element: <PerformanceReviewPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee-document-management",
+                path: "/employee/document-management",
                 element: <DocumentManagementPage />,
                 errorElement: <NotFoundPage />,
             },
