@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { AppstoreAddOutlined, TeamOutlined, CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import { Card, List, Tag } from "antd";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import { Card, Spin, Alert } from "antd";
 import DashboardCard from "../../components/cards/DashboardCard";
 import PageTitle from "../../components/ui/PageTitle";
-import { employeesData } from "../../data/mockData";
+import { useGetEmployeeQuery } from "../../store/services/employeeApi";
 import TaskDistribution from "../../components/charts/TaskDistribution";
 import EmployeeMetrics from "../../components/charts/EmployeeMetrics";
 
-
-
-
 const EmployeeDashboard: React.FC = () => {
+  // Use the query API to fetch employee data
+  const { data: employeeData, error, isLoading } = useGetEmployeeQuery(undefined);
+
   return (
     <div className="flex flex-col">
       <PageTitle title="Employee Dashboard" />
@@ -47,13 +45,23 @@ const EmployeeDashboard: React.FC = () => {
             isMoney={false}
           />
         </div>
+
         <Card title="Personal Information" bordered={true} className="mb-4">
-          <div className="space-y-2">
-            <p><strong>Name:</strong> {employeesData.name}</p>
-            <p><strong>Position:</strong> {employeesData.position}</p>
-            <p><strong>Department:</strong> {employeesData.department}</p>
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <Spin />
+            </div>
+          ) : error ? (
+            <Alert message="Failed to load employee data." type="error" />
+          ) : (
+            <div className="space-y-2">
+              <p><strong>Name:</strong> {`${employeeData?.firstName + " " + employeeData?.lastName}` || "N/A"}</p>
+              <p><strong>Position:</strong> {employeeData?.position || "N/A"}</p>
+              <p><strong>Department:</strong> {employeeData?.department || "N/A"}</p>
+            </div>
+          )}
         </Card>
+
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mb-4">
           <TaskDistribution />
           <EmployeeMetrics />

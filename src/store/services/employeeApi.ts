@@ -26,8 +26,8 @@ export const employeeApi = createApi({
       }),
     }),
 
-    getEmployee: build.query({
-      query: (id) => `employees/${id}`,
+    getEmployee: build.query<EmployeeDetails, any>({
+      query: () => `employees/employee-info`,
     }),
 
     getEmployees: build.query<EmployeeDetails[], any>({

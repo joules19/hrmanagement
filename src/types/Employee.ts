@@ -21,6 +21,7 @@ export interface EmployeeDetails {
     lastName?: string;
     email?: string;
     phoneNumber?: string | null;
+    employeeNumber?: string | null;
     address?: string;
     stateCode?: string | null;
     lgaId?: string;
@@ -41,5 +42,5 @@ export interface EmployeeDetails {
     managerName?: string | null;
     role?: string | null;
     status?: string | null;
-
+    statusName?: string | null;
 }
