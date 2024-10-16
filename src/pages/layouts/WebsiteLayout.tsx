@@ -1,15 +1,15 @@
-import { Layout, Menu, Button } from "antd";
-import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Layout, Button } from "antd";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSession } from "../../utils/sessionManager";
+import { ApplicationRoles } from "../../enums/ApplicationRoles";
 
 const { Header, Content } = Layout;
 
 export default function WebsiteLayout() {
   const session = getSession();
-  const [current, setCurrent] = useState("home");
-  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (session) {
@@ -17,13 +17,16 @@ export default function WebsiteLayout() {
     }
   }, [navigate]);
 
-  const handleMenuClick = (e: any) => {
-    setCurrent(e.key);
+  const handleDashboardNavigation = () => {
+    if (userDetails?.role === ApplicationRoles.Administrator) {
+      navigate("/dashboard");
+    } else if (userDetails?.role === ApplicationRoles.Employee) {
+      navigate("/employee/dashboard");
+    }
   };
 
   return (
     <Layout>
-      {/* Ant Design Header */}
       <Header
         className="header sticky"
         style={{
@@ -31,67 +34,32 @@ export default function WebsiteLayout() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          position: "sticky",
         }}
       >
         <div
           onClick={() => navigate("/")}
           className="logo"
-          style={{ color: "white" }}
+          style={{ color: "white", cursor: "pointer" }}
         >
-          <h1
-            className="text-xl font-semibold cursor-pointer"
-            style={{ margin: 0, color: "#fff" }}
-          >
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>
             HR Management
           </h1>
         </div>
 
         <div style={{ display: "flex", alignItems: "center" }}>
-          {/* <Menu
-            mode="horizontal"
-            selectedKeys={[current]}
-            onClick={handleMenuClick}
-            style={{
-              backgroundColor: "transparent",
-              borderBottom: "none",
-              marginRight: "20px",
-            }}
-          >
-            <Menu.Item key="careers">
-              <Link to="/" style={{ color: "#fff" }}>
-                Careers
-              </Link>
-            </Menu.Item>
-          </Menu> */}
-
-          {/* Login Button in Header */}
-          {!userDetails && (
+          {!userDetails ? (
             <Button
               onClick={() => navigate("/auth/login")}
               type="primary"
-              shape="default"
-              style={{
-                backgroundColor: "#fff",
-                color: "#36A2EB",
-                borderColor: "#fff",
-              }}
+              style={{ backgroundColor: "#fff", color: "#36A2EB", borderColor: "#fff" }}
             >
               Login
             </Button>
-          )}
-
-          {/* Dashboard Button in Header */}
-          {userDetails && (
+          ) : (
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={handleDashboardNavigation}
               type="primary"
-              shape="default"
-              style={{
-                backgroundColor: "#fff",
-                color: "#36A2EB",
-                borderColor: "#fff",
-              }}
+              style={{ backgroundColor: "#fff", color: "#36A2EB", borderColor: "#fff" }}
             >
               Dashboard
             </Button>
@@ -99,12 +67,9 @@ export default function WebsiteLayout() {
         </div>
       </Header>
 
-      {/* Main content area */}
       <Content style={{ padding: "20px" }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-6 ">
-          {/* Replace with your content */}
           <Outlet />
-          {/* /End replace */}
         </div>
       </Content>
     </Layout>

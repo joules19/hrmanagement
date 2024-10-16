@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Spin, message, Tag } from "antd";
+import { Table, Spin, message, Tag, Modal } from "antd"; // Import Modal here
 import type { TableColumnsType, TableProps } from "antd";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { JobPosting, JobPostingDetails } from "../../types/onboarding";
@@ -29,22 +29,30 @@ const JobPostingTable: React.FC = () => {
       setData(allPostedJobsData);
       setLoading(false);
     }
-
-  }, [allPostedJobsData, setData, setLoading]);
+  }, [allPostedJobsData]);
 
   useEffect(() => {
-    if (removeJobFailure) {
-      message.success("Application deleted successfully");
+    if (removedJobSuccess) {
+      message.success("Job deleted successfully");
       setTimeout(() => {
-        window.location.reload()
+        window.location.reload();
       }, 2000);
       return;
     }
+  }, [removedJobSuccess]);
 
-    // message.error("Operation Failed");
-
-  }, [removeJobFailure]);
-
+  const handleDelete = (id: string) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this job posting?',
+      content: 'This action cannot be undone.',
+      onOk() {
+        removeJob(id);
+      },
+      onCancel() {
+        message.info("Deletion canceled.");
+      },
+    });
+  };
 
   const columns: TableColumnsType<JobPostingDetails> = [
     {
@@ -76,7 +84,6 @@ const JobPostingTable: React.FC = () => {
       onFilter: (value, record) => record.status.includes(value as string),
       render: (status) => {
         let color = "";
-
         if (status === "Open") {
           color = "green";
         } else if (status === "Closed") {
@@ -84,11 +91,9 @@ const JobPostingTable: React.FC = () => {
         } else if (status === "On Hold") {
           color = "orange";
         }
-
         return <Tag color={color}>{status}</Tag>;
       },
-    }
-    ,
+    },
     {
       title: "Posted Date",
       dataIndex: "postingDate",
@@ -111,7 +116,7 @@ const JobPostingTable: React.FC = () => {
           </button>
           <button
             className="text-red-500 py-1 px-2 rounded"
-            onClick={() => removeJob(record.id!)}
+            onClick={() => handleDelete(record.id!)} // Use handleDelete here
           >
             <TrashIcon className="w-4 h-4" />
           </button>

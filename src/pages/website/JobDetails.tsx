@@ -18,6 +18,7 @@ import {
   DatePicker,
   Select,
   Alert,
+  Skeleton,
 } from "antd";
 import {
   FaBriefcase,
@@ -50,6 +51,17 @@ const JobDetails: React.FC = () => {
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
   const [getJob, { isLoading: isJobLoading, data: jobData, error: getJobFailure }] = useGetJobMutation();
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    if (!isJobLoading) {
+      // Delay for 2 seconds before switching the loading state to false
+      const timer = setTimeout(() => setLoading(false)
+        , 2000);
+      return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+    }
+  }, [isJobLoading]);
 
 
   // Handle the modal visibility
@@ -188,7 +200,10 @@ const JobDetails: React.FC = () => {
       <Row gutter={[16, 16]} justify="center">
         {/* Job Title and Company */}
         <Col xs={24} md={16}>
-          <Card
+          {loading ? <div className="h-screen pt-20">
+            <div className="flex flex-col gap-8">  <Skeleton active />
+              <Skeleton active /></div>
+          </div> : <Card
             bordered={false}
             style={{ boxShadow: "0 4px 12px rgba(54, 162, 235, 0.2)" }}
           >
@@ -246,11 +261,12 @@ const JobDetails: React.FC = () => {
             >
               Apply Now
             </AntButton>
-          </Card>
+          </Card>}
+
         </Col>
 
         {/* Job Details Sidebar */}
-        <Col xs={24} md={8}>
+        {!loading && (<Col xs={24} md={8}>
           {/* Benefits Section */}
           <Card
             bordered={false}
@@ -269,10 +285,11 @@ const JobDetails: React.FC = () => {
               )}
             />
           </Card>
-        </Col>
+        </Col>)}
 
         {/* Responsibilities and Qualifications */}
-        <Col xs={24} md={16}>
+        {/* Job Details Sidebar */}
+        {!loading && (<><Col xs={24} md={16}>
           <Card
             bordered={false}
             style={{ boxShadow: "0 4px 12px rgba(54, 162, 235, 0.1)" }}
@@ -289,22 +306,22 @@ const JobDetails: React.FC = () => {
           </Card>
         </Col>
 
-        <Col xs={24} md={16}>
-          <Card
-            bordered={false}
-            style={{ boxShadow: "0 4px 12px rgba(54, 162, 235, 0.1)" }}
-          >
-            <Title level={4}>Qualifications</Title>
-            <List
-              dataSource={job?.qualifications}
-              renderItem={(item) => (
-                <List.Item>
-                  <Text>- {item}</Text>
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
+          <Col xs={24} md={16}>
+            <Card
+              bordered={false}
+              style={{ boxShadow: "0 4px 12px rgba(54, 162, 235, 0.1)" }}
+            >
+              <Title level={4}>Qualifications</Title>
+              <List
+                dataSource={job?.qualifications}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Text>- {item}</Text>
+                  </List.Item>
+                )}
+              />
+            </Card>
+          </Col></>)}
       </Row>
 
       {/* Modal for Job Application Form */}

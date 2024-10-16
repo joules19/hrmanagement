@@ -4,6 +4,7 @@ import JobPostingTable from "../../../components/tables/JobPostingTable";
 import JobPostingModal from "../../../components/modals/JobPostingModal";
 import { Button } from "../../../components/ui/Button";
 import PageTitle from "../../../components/ui/PageTitle";
+import { AnalyzeResumeRequest } from "../../../models/api-client/ai/Ai.Interface";
 
 const JobPosting: React.FC = () => {
   const [jobPostings, setJobPostings] = useState<JobPostingModel[]>([]);
@@ -32,7 +33,7 @@ const JobPosting: React.FC = () => {
     if (currentPosting) {
       setJobPostings(
         jobPostings.map((posting) =>
-          posting.jobID === currentPosting.jobID ? newPosting : posting
+          posting.id === currentPosting.id ? newPosting : posting
         )
       );
     } else {
@@ -41,9 +42,6 @@ const JobPosting: React.FC = () => {
     handleCloseModal();
   };
 
-  const handleDeletePosting = (id: number) => {
-    setJobPostings(jobPostings.filter((posting) => posting.jobID !== id));
-  };
 
   return (
     <div className="flex flex-col">
