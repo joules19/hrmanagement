@@ -324,13 +324,13 @@ export default function AdminLayout() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex flex-grow flex-col overflow-y-auto bg-primary-1 pt-5">
+          {/* Sidebar component */}
+          <div className="flex flex-grow flex-col overflow-y-auto bg-primary-1 pt-5" style={{ backgroundColor: '#36A2EB' }}>
             <div
               onClick={() => navigate("/")}
               className="flex flex-shrink-0 items-center px-4 cursor-pointer"
             >
-              <h1 className="text-primary-3 text-xl font-semibold">
+              <h1 className="text-white text-xl font-semibold">
                 HR Management
               </h1>
             </div>
@@ -379,8 +379,19 @@ export default function AdminLayout() {
                 ))}
               </nav>
             </div>
+
+            {/* Fancy Card at the base of the sidebar */}
+            <div className="mt-auto px-4 py-6 cursor-pointer">
+              <div className="bg-gradient-to-r from-white via-[#A5D8F5] to-[#C9EAF9] rounded-lg p-4 text-primary-1 shadow-lg transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
+                <h3 className="text-xl font-bold mb-2">✨ Coming Soon!</h3>
+                <p className="text-sm">
+                  Applicants rating based on CV is coming soon. Stay tuned!
+                </p>
+              </div>
+            </div>
           </div>
         </div>
+
         <div className="flex flex-1 flex-col md:pl-64">
           <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
             <button

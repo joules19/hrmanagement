@@ -7,7 +7,7 @@ interface DashboardCardProps {
   icon: any; // Correct typing for the icon component
   color: string;
   title: string;
-  count?: number;
+  count?: any;
   isMoney?: boolean;
   amount?: string | number;
 }

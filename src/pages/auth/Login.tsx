@@ -71,16 +71,34 @@ const Login: React.FC = () => {
             message.success("Login successful");
 
             var user = await getSession();
-            if (user.role === ApplicationRoles.Administrator) {
-              // Redirect to admin dashboard
-              return <Navigate to="dashboard" replace />;
-            }
 
-            else if (user.role === ApplicationRoles.Employee) {
-              // Redirect to employee dashboard
-              return <Navigate to="/employee/dashboard" replace />;
-            }
+            const roleToDashboardMap: { [key in ApplicationRoles]: string } = {
+              [ApplicationRoles.Administrator]: "/dashboard",
+              [ApplicationRoles.HrManager]: "/hr/dashboard",
+              [ApplicationRoles.Recruiter]: "/recruiter/dashboard",
+              [ApplicationRoles.Employee]: "/employee/dashboard",
+              [ApplicationRoles.PayrollManager]: "/payroll/dashboard",
+              [ApplicationRoles.Manager]: "/manager/dashboard",
+              [ApplicationRoles.ItSupport]: "/itsupport/dashboard",
+              [ApplicationRoles.Auditor]: "/auditor/dashboard",
+              [ApplicationRoles.Trainer]: "/trainer/dashboard",
+              [ApplicationRoles.Guest]: "/guest/dashboard"
+            };
 
+            if (user && user.role) {
+              // Cast user.role to ApplicationRoles to avoid implicit any
+              const userRole = user.role as ApplicationRoles;
+
+              const dashboardRoute = roleToDashboardMap[userRole]; // This will now work
+
+              if (dashboardRoute) {
+                // Use replace method to avoid adding the route to history
+                navigate(dashboardRoute, { replace: true });
+              } else {
+                // Handle cases where the role doesn't match any route
+                navigate("/", { replace: true });
+              }
+            }
 
           }, 200); // 200ms delay
         }

@@ -174,7 +174,7 @@ const InterviewModal: React.FC<InterviewModalProps> = ({
 
             <h3 className="text-xl font-bold mb-4">Reviewer Feedback</h3>
             <p className="mb-2">Feedback from: <strong>{selectedReviewer}</strong></p>
-            <p>This is where you would load and display the specific review.</p>
+            <p>No feedback yet, come back later.</p>
 
             <div className="flex gap-2 w-full h-[38px] mt-6">
 

@@ -19,28 +19,28 @@ const EmployeeDashboard: React.FC = () => {
       <div className="pt-10 p-6 border-[.8px] rounded-xl">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-4">
           <DashboardCard
-            count={`${employeesData.attendance}%`}
+            count={`${0}%`}
             title="Attendance Rate"
             icon={TeamOutlined}
             color="#B7EB8F"
             isMoney={false}
           />
           <DashboardCard
-            count={employeesData.leaveBalance}
+            count={0}
             title="Leave Balance"
             icon={CalendarOutlined}
             color="#FFC106"
             isMoney={false}
           />
           <DashboardCard
-            count={employeesData.upcomingReviews}
+            count={0}
             title="Upcoming Reviews"
             icon={ClockCircleOutlined}
             color="#36A2EB"
             isMoney={false}
           />
           <DashboardCard
-            count={employeesData.completedTrainings}
+            count={0}
             title="Completed Trainings"
             icon={AppstoreAddOutlined}
             color="#FF6384"
