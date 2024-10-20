@@ -8,7 +8,7 @@ import { message, notification } from "antd";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/ui/Button";
 import { Radio } from "antd";
-import { ApplicationRoles } from "../../enums/ApplicationRoles";
+import { ApplicationRoles, RoleToDashboardMap } from "../../enums/ApplicationRoles";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -54,8 +54,9 @@ const Login: React.FC = () => {
               firstname: response?.data?.user.firstName,
               lastname: response?.data?.user.lastName,
               role: response?.data?.user.role,
-              initialSetup: response?.data?.user.initialSetup
-              // Any other details you might want to store
+              initialSetup: response?.data?.user.initialSetup,
+              passwordChangedStatus: response?.data?.user.passwordChangedStatus,
+              isOnboardingComplete: response?.data?.user.isOnboardingComplete,
             };
 
             // Create a session by encrypting and storing user details
@@ -72,24 +73,11 @@ const Login: React.FC = () => {
 
             var user = await getSession();
 
-            const roleToDashboardMap: { [key in ApplicationRoles]: string } = {
-              [ApplicationRoles.Administrator]: "/dashboard",
-              [ApplicationRoles.HrManager]: "/hr/dashboard",
-              [ApplicationRoles.Recruiter]: "/recruiter/dashboard",
-              [ApplicationRoles.Employee]: "/employee/dashboard",
-              [ApplicationRoles.PayrollManager]: "/payroll/dashboard",
-              [ApplicationRoles.Manager]: "/manager/dashboard",
-              [ApplicationRoles.ItSupport]: "/itsupport/dashboard",
-              [ApplicationRoles.Auditor]: "/auditor/dashboard",
-              [ApplicationRoles.Trainer]: "/trainer/dashboard",
-              [ApplicationRoles.Guest]: "/guest/dashboard"
-            };
-
             if (user && user.role) {
               // Cast user.role to ApplicationRoles to avoid implicit any
               const userRole = user.role as ApplicationRoles;
 
-              const dashboardRoute = roleToDashboardMap[userRole]; // This will now work
+              const dashboardRoute = RoleToDashboardMap[userRole]; // This will now work
 
               if (dashboardRoute) {
                 // Use replace method to avoid adding the route to history
@@ -118,14 +106,14 @@ const Login: React.FC = () => {
   return (
     <>
       <div
-        className="min-h-screen flex items-start justify-center rounded-[4px] my-"
+        className="min-h-screen flex items-start justify-center rounded-[4px]"
         style={{
           backgroundImage: `radial-gradient(circle, rgba(54, 162, 235, 0.6) 1px, rgba(54, 162, 235, 0) 1px)`,
           backgroundSize: "20px 20px", // Adjust size of the pattern
         }}
       >
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-[6rem]">
-          <h2 className="text-2xl font-bold mb-6 text-center text-[#36A2EB]">
+          <h2 className="text-2xl font-bold mb-6 text-center text-primay-1">
             Sign in to your account
           </h2>
           <form onSubmit={formik.handleSubmit}>
@@ -140,7 +128,7 @@ const Login: React.FC = () => {
                 type="email"
                 id="email"
                 {...formik.getFieldProps("email")}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#36A2EB]"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primay-1"
               />
               {formik.touched.email && formik.errors.email ? (
                 <div className="text-red-500 text-sm">
@@ -159,7 +147,7 @@ const Login: React.FC = () => {
                 type={passwordVisible ? "text" : "password"}
                 id="password"
                 {...formik.getFieldProps("password")}
-                className="flex items-center w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#36A2EB]"
+                className="flex items-center w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primay-1"
               />
               <span
                 onClick={() => setPasswordVisible(!passwordVisible)}
@@ -184,7 +172,7 @@ const Login: React.FC = () => {
                 Remember me
               </label>
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Login as
               </label>
@@ -197,9 +185,9 @@ const Login: React.FC = () => {
                 </Radio>
                 <Radio value={true}>Admin</Radio>
               </Radio.Group>
-            </div>
+            </div> */}
             <div className="mb-6 text-right">
-              <a href="#" className="text-[#36A2EB] hover:underline">
+              <a href="#" className="text-primay-1 hover:underline">
                 Forgot password?
               </a>
             </div>

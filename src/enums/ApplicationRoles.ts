@@ -10,3 +10,16 @@ export enum ApplicationRoles {
     Trainer = "Trainer",              // Manages training materials, sessions, and employee learning progress
     Guest = "Guest"                   // Limited, temporary access for external consultants or auditors
 }
+
+export const RoleToDashboardMap: { [key in ApplicationRoles]: string } = {
+    [ApplicationRoles.Administrator]: "/dashboard",
+    [ApplicationRoles.HrManager]: "/hr/dashboard",
+    [ApplicationRoles.Recruiter]: "/recruiter/dashboard",
+    [ApplicationRoles.Employee]: "/employee/dashboard",
+    [ApplicationRoles.PayrollManager]: "/payroll/dashboard",
+    [ApplicationRoles.Manager]: "/manager/dashboard",
+    [ApplicationRoles.ItSupport]: "/itsupport/dashboard",
+    [ApplicationRoles.Auditor]: "/auditor/dashboard",
+    [ApplicationRoles.Trainer]: "/trainer/dashboard",
+    [ApplicationRoles.Guest]: "/guest/dashboard"
+};

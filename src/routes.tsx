@@ -36,6 +36,7 @@ import AuthMiddleware from "./hooks/AuthMiddleware.tsx";
 import Setup from "./pages/Admin/Setup.tsx";
 import { getSession } from "./utils/sessionManager.ts";
 import EmployeeList from "./pages/Admin/employee/EmployeeList.tsx";
+import OnboardingPage from "./pages/Employee/OnboardPage.tsx";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
     const session = getSession();
@@ -184,6 +185,15 @@ export const router = createBrowserRouter([
         element: <EmployeeLayout />,
         children: [
             {
+                path: "/employee/onboard",
+                element: (
+                    <PrivateRoute>
+                        <OnboardingPage />
+                    </PrivateRoute>
+                ),
+                errorElement: <NotFoundPage />,
+            },
+            {
                 path: "/employee/dashboard",
                 element: (
                     <PrivateRoute><AuthMiddleware>
@@ -194,7 +204,10 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/employee/profile",
-                element: <EmployeeProfile />,
+
+                element: <PrivateRoute><AuthMiddleware>
+                    <EmployeeProfile />
+                </AuthMiddleware></PrivateRoute>,
                 errorElement: <NotFoundPage />,
             },
             {

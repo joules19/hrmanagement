@@ -14,11 +14,18 @@ const columns: TableColumnsType<EmployeeDetails> = [
     width: "20%",
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    sorter: (a, b) => calculateAge(a.dob!) - calculateAge(b.dob!),
-    width: "10%",
+    title: "Email",
+    dataIndex: "email",
+    filterSearch: true,
+    onFilter: (value, record) => record.email!.includes(value as string),
+    width: "20%",
   },
+  // {
+  //   title: "Age",
+  //   dataIndex: "age",
+  //   sorter: (a, b) => calculateAge(a.dob!) - calculateAge(b.dob!),
+  //   width: "10%",
+  // },
   {
     title: "Position",
     dataIndex: "position",
@@ -42,13 +49,13 @@ const columns: TableColumnsType<EmployeeDetails> = [
     onFilter: (value, record) => record.department!.includes(value as string),
     width: "15%",
   },
-  {
-    title: "Hire Date",
-    dataIndex: "hireDate",
-    sorter: (a, b) =>
-      new Date(a.hireDate!).getTime() - new Date(b.hireDate!).getTime(),
-    width: "10%",
-  },
+  // {
+  //   title: "Hire Date",
+  //   dataIndex: "hireDate",
+  //   sorter: (a, b) =>
+  //     new Date(a.hireDate!).getTime() - new Date(b.hireDate!).getTime(),
+  //   width: "10%",
+  // },
   {
     title: "Status",
     dataIndex: "status",
@@ -93,6 +100,7 @@ const EmployeeListTable: React.FC = () => {
     position: employee.position || "N/A",
     department: employee.department || "N/A",
     address: employee.address || "N/A",
+    email: employee.email || "N/A",
     hireDate: new Date(employee.hireDate!).toLocaleDateString(),
     status: employee.status || "Active", // Assume status is active unless specified
   }));

@@ -82,7 +82,9 @@ export const recruitmentApi = createApi({
                 body: data,
             }),
         }),
-
+        getJobs: build.query<JobPostingDetails[], any>({
+            query: () => 'Recruitment/getallJobs',
+        }),
     }),
 });
 
@@ -96,4 +98,5 @@ export const {
     useGetApplicationsByJobIdMutation,
     useSendInvitationMutation,
     useGetInterviewsMutation,
-    useGetInterviewMutation } = recruitmentApi;
+    useGetInterviewMutation,
+    useGetJobsQuery } = recruitmentApi;
