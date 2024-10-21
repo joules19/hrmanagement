@@ -1,4 +1,3 @@
-// routes.tsx
 import {
     createBrowserRouter,
     Navigate,
@@ -6,18 +5,6 @@ import {
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import AdminLayout from "./pages/layouts/AdminLayout.tsx";
 import EmployeeLayout from "./pages/layouts/EmployeeLayout.tsx";
-import AddEmployee from "./pages/admin/employee/AddEmployee.tsx";
-import JobPosting from "./pages/admin/onboarding/JobPosting.tsx";
-import Applications from "./pages/admin/onboarding/Applications.tsx";
-import OnboardingProcess from "./pages/admin/onboarding/OnboardingProcess.tsx";
-import ResumeParsing from "./pages/admin/onboarding/ResumeParsing.tsx";
-import OnboardingWorkflow from "./pages/admin/onboarding/OnboardingWorkflow.tsx";
-import InterviewScheduling from "./pages/admin/onboarding/InterviewScheduling.tsx";
-import TimeTracking from "./pages/admin/attendance/TimeTracking.tsx";
-import LeaveManagement from "./pages/admin/attendance/LeaveManagement.tsx";
-import OvertimeManagement from "./pages/admin/attendance/OvertimeManagement.tsx";
-import SalaryCalculations from "./pages/admin/payroll/SalaryCalculations.tsx";
-import PayrollCompliance from "./pages/admin/payroll/PayrollCompliance.tsx";
 import Login from "./pages/auth/Login.tsx";
 import EmployeeDashboard from "./pages/Employee/EmployeeDashboard.tsx";
 import EmployeeProfile from "./pages/Employee/EmployeeProfile.tsx";
@@ -27,8 +14,6 @@ import PerformanceReviewPage from "./pages/Employee/PerformanceReviewPage.tsx";
 import DocumentManagementPage from "./pages/Employee/DocumentManagementPage.tsx";
 import Dashboard from "./pages/Admin/Dashboard.tsx";
 import Interviews from "./pages/Admin/onboarding/Interviews.tsx";
-import AddJobHistory from "./pages/admin/employee/AddJobHistory.tsx";
-import EmployeeDocumentManager from "./pages/admin/employee/EmployeeDocumentManager.tsx";
 import WebsiteLayout from "./pages/layouts/WebsiteLayout.tsx";
 import JobListings from "./pages/website/JobListings.tsx";
 import JobDetails from "./pages/website/JobDetails.tsx";
@@ -37,53 +22,67 @@ import Setup from "./pages/Admin/Setup.tsx";
 import { getSession } from "./utils/sessionManager.ts";
 import EmployeeList from "./pages/Admin/employee/EmployeeList.tsx";
 import OnboardingPage from "./pages/Employee/OnboardPage.tsx";
+import { PathEnum } from "./enums/Common.ts";
+import JobPosting from "./pages/Admin/onboarding/JobPosting.tsx";
+import ResumeParsing from "./pages/Admin/onboarding/ResumeParsing.tsx";
+import Applications from "./pages/Admin/onboarding/Applications.tsx";
+import OnboardingWorkflow from "./pages/Admin/onboarding/OnboardingWorkflow.tsx";
+import OnboardingProcess from "./pages/Admin/onboarding/OnboardingProcess.tsx";
+import AddEmployee from "./pages/Admin/employee/AddEmployee.tsx";
+import AddJobHistory from "./pages/Admin/employee/AddJobHistory.tsx";
+import EmployeeDocumentManager from "./pages/Admin/employee/EmployeeDocumentManager.tsx";
+import TimeTracking from "./pages/Admin/attendance/TimeTracking.tsx";
+import LeaveManagement from "./pages/Admin/attendance/LeaveManagement.tsx";
+import SalaryCalculations from "./pages/Admin/payroll/SalaryCalculations.tsx";
+import OvertimeManagement from "./pages/Admin/attendance/OvertimeManagement.tsx";
+import PayrollCompliance from "./pages/Admin/payroll/PayrollCompliance.tsx";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
     const session = getSession();
-    return session ? children : <Navigate to="/auth/login" />;
+    return session ? children : <Navigate to={PathEnum.Auth.Login} />;
 };
 
 export const router = createBrowserRouter([
-    //Website Section
+
+    // Website Section
     {
         element: <WebsiteLayout />,
         children: [
             {
-                path: "/auth/login",
+                path: PathEnum.Auth.Login,
                 element: <Login />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/",
+                path: PathEnum.Website.Home,
                 element: <JobListings />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/job-listing/:id",
+                path: PathEnum.Website.JobDetails(":id"),
                 element: <JobDetails />,
                 errorElement: <NotFoundPage />,
             },
         ],
     },
-    //Auth Section
 
+    // Admin Section
     {
         element: <AdminLayout />,
         children: [
             {
-                path: "/dashboard",
+                path: PathEnum.Admin.Dashboard,
                 element: (
-
-                    <PrivateRoute><AuthMiddleware>
-                        <Dashboard />
-                    </AuthMiddleware>
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <Dashboard />
+                        </AuthMiddleware>
                     </PrivateRoute>
-
                 ),
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/setup",
+                path: PathEnum.Admin.Setup,
                 element: (
                     <PrivateRoute>
                         <Setup />
@@ -94,98 +93,118 @@ export const router = createBrowserRouter([
 
             // Onboarding Routes
             {
-                path: "/onboarding/job-postings",
-                element: <PrivateRoute><AuthMiddleware><JobPosting /></AuthMiddleware></PrivateRoute>,
+                path: PathEnum.Admin.Onboarding.JobPostings,
+                element: (
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <JobPosting />
+                        </AuthMiddleware>
+                    </PrivateRoute>
+                ),
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/onboarding/applications",
-                element: <PrivateRoute><AuthMiddleware><Applications /></AuthMiddleware></PrivateRoute>,
+                path: PathEnum.Admin.Onboarding.Applications,
+                element: (
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <Applications />
+                        </AuthMiddleware>
+                    </PrivateRoute>
+                ),
                 errorElement: <NotFoundPage />,
             },
-
             {
-                path: "/onboarding/resume-parsing",
+                path: PathEnum.Admin.Onboarding.ResumeParsing,
                 element: <ResumeParsing />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/onboarding/onboarding-workflows",
+                path: PathEnum.Admin.Onboarding.OnboardingWorkflows,
                 element: <OnboardingWorkflow />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/onboarding/interviews",
-                element: <PrivateRoute><AuthMiddleware><Interviews /></AuthMiddleware></PrivateRoute>,
+                path: PathEnum.Admin.Onboarding.Interviews,
+                element: (
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <Interviews />
+                        </AuthMiddleware>
+                    </PrivateRoute>
+                ),
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/onboarding/onboarding-process",
+                path: PathEnum.Admin.Onboarding.OnboardingProcess,
                 element: <OnboardingProcess />,
                 errorElement: <NotFoundPage />,
             },
 
+            // Employee Management
             {
-                path: "/employees/all",
+                path: PathEnum.Admin.Employees.List,
                 element: <EmployeeList />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employees/add",
+                path: PathEnum.Admin.Employees.Add,
                 element: <AddEmployee />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employees/job-history",
+                path: PathEnum.Admin.Employees.JobHistory,
                 element: <AddJobHistory />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employees/documents",
+                path: PathEnum.Admin.Employees.Documents,
                 element: <EmployeeDocumentManager />,
                 errorElement: <NotFoundPage />,
             },
 
             // Attendance Routes
             {
-                path: "/attendance/time-tracking",
+                path: PathEnum.Admin.Attendance.TimeTracking,
                 element: <TimeTracking />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/attendance/attendance-records",
+                path: PathEnum.Admin.Attendance.AttendanceRecords,
                 element: <TimeTracking />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/attendance/leave-management",
+                path: PathEnum.Admin.Attendance.LeaveManagement,
                 element: <LeaveManagement />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/attendance/overtime-management",
+                path: PathEnum.Admin.Attendance.OvertimeManagement,
                 element: <OvertimeManagement />,
                 errorElement: <NotFoundPage />,
             },
 
             // Payroll Routes
             {
-                path: "/payroll/salary-calculation",
+                path: PathEnum.Admin.Payroll.SalaryCalculation,
                 element: <SalaryCalculations />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/payroll/payroll-compliance",
+                path: PathEnum.Admin.Payroll.PayrollCompliance,
                 element: <PayrollCompliance />,
                 errorElement: <NotFoundPage />,
             },
         ],
     },
+
+    // Employee Section
     {
         element: <EmployeeLayout />,
         children: [
             {
-                path: "/employee/onboard",
+                path: PathEnum.Employee.Onboard,
                 element: (
                     <PrivateRoute>
                         <OnboardingPage />
@@ -194,117 +213,53 @@ export const router = createBrowserRouter([
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/dashboard",
+                path: PathEnum.Employee.Dashboard,
                 element: (
-                    <PrivateRoute><AuthMiddleware>
-                        <EmployeeDashboard />
-                    </AuthMiddleware></PrivateRoute>
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <EmployeeDashboard />
+                        </AuthMiddleware>
+                    </PrivateRoute>
                 ),
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/profile",
-
-                element: <PrivateRoute><AuthMiddleware>
-                    <EmployeeProfile />
-                </AuthMiddleware></PrivateRoute>,
+                path: PathEnum.Employee.Profile,
+                element: (
+                    <PrivateRoute>
+                        <AuthMiddleware>
+                            <EmployeeProfile />
+                        </AuthMiddleware>
+                    </PrivateRoute>
+                ),
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/payslips",
+                path: PathEnum.Employee.Payslips,
                 element: <PayslipPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/leave-requests",
+                path: PathEnum.Employee.LeaveRequests,
                 element: <LeaveRequestPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/performance",
+                path: PathEnum.Employee.Performance,
                 element: <PerformanceReviewPage />,
                 errorElement: <NotFoundPage />,
             },
             {
-                path: "/employee/document-management",
+                path: PathEnum.Employee.DocumentManagement,
                 element: <DocumentManagementPage />,
-                errorElement: <NotFoundPage />,
-            },
-            // Onboarding Routes
-            {
-                path: "/onboarding/job-postings",
-                element: <JobPosting />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/applications",
-                element: <Applications />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/applications",
-                element: <Applications />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/resume-parsing",
-                element: <ResumeParsing />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/onboarding-workflows",
-                element: <OnboardingWorkflow />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/interview-scheduling",
-                element: <InterviewScheduling />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/onboarding/onboarding-process",
-                element: <OnboardingProcess />,
-                errorElement: <NotFoundPage />,
-            },
-
-            // Attendance Routes
-            {
-                path: "/attendance/time-tracking",
-                element: <TimeTracking />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/attendance/attendance-records",
-                element: <TimeTracking />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/attendance/leave-management",
-                element: <LeaveManagement />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/attendance/overtime-management",
-                element: <OvertimeManagement />,
-                errorElement: <NotFoundPage />,
-            },
-
-            // Payroll Routes
-            {
-                path: "/payroll/salary-calculation",
-                element: <SalaryCalculations />,
-                errorElement: <NotFoundPage />,
-            },
-            {
-                path: "/payroll/payroll-compliance",
-                element: <PayrollCompliance />,
                 errorElement: <NotFoundPage />,
             },
         ],
     },
+
+    // Catch-All NotFound Route
     {
-        path: "*",
+        path: PathEnum.NotFound,
         element: <NotFoundPage />,
     },
 ]);
-

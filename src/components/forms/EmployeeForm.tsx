@@ -106,7 +106,7 @@ const EmployeeForm: React.FC = () => {
       const formData = new FormData();
 
       // Append fields to formData
-      formData.append("firstName", values.firstName);
+      formData.append("firstName", values.firstName!);
       formData.append("lastName", values.lastName);
       formData.append("positionId", values.position);
       formData.append("departmentId", values.department);
@@ -208,7 +208,7 @@ const EmployeeForm: React.FC = () => {
             label="FirstName"
             id="firstName"
             name="firstName"
-            value={formik.values.firstName}
+            value={formik.values.firstName!}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             required

@@ -8,6 +8,8 @@ import { daysAgo, formatCurrencyRange } from "../../utils/helperMethods";
 import { Button } from "../../components/ui/Button";
 import { toast } from "sonner";
 import axiosInstance from "../../lib/axiosInterceptor";
+import { PathEnum } from "../../enums/Common";
+import AppSpinner from "../../components/ui/Spinner";
 
 const JobListings: React.FC = () => {
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ const JobListings: React.FC = () => {
         </h1>
 
         {/* Show loading indicator */}
-        {isLoading && <p className="text-center text-lg">Loading job listings...</p>}
+        {isLoading && <AppSpinner size={28} color="#36A2EB" />}
 
         {/* Show error message if any */}
         {error && <p className="text-center text-red-500">{error}</p>}
@@ -60,7 +62,7 @@ const JobListings: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobListings?.map((job: JobPostingDetails) => (
               <div
-                onClick={() => navigate(`/job-listing/${job.id}`)}
+                onClick={() => navigate(PathEnum.Website.JobDetails(job.id!))}
                 key={job.id}
                 className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
               >

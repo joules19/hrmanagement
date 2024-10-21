@@ -34,9 +34,8 @@ const FileInput: React.FC<FileInputProps> = ({
         required={required}
         onChange={onChange}
         onBlur={onBlur}
-        className={`block w-full border-[.8px] ${
-          error ? "border-red-500" : "border-gray-300"
-        } rounded-md py-2 px-3 shadow-sm flex-grow mr-2 p-2 border-[.8px] border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-1`}
+        className={`block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary-2 hover:file:bg-blue-100 ${error ? "border-red-500" : "border-gray-300"
+          } rounded-md py-2 px-3 flex-grow focus:outline-none focus:ring-1 focus:ring-primary-1 border-[.8px] shadow-sm`}
       />
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
