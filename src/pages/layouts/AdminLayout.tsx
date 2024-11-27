@@ -325,7 +325,10 @@ export default function AdminLayout() {
         {/* Static sidebar for desktop */}
         <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
           {/* Sidebar component */}
-          <div className="flex flex-grow flex-col overflow-y-auto bg-primary-1 pt-5" style={{ backgroundColor: '#36A2EB' }}>
+          <div
+            className="flex flex-grow flex-col overflow-y-auto bg-primary-1 pt-5"
+            style={{ backgroundColor: "#36A2EB" }}
+          >
             <div
               onClick={() => navigate("/")}
               className="flex flex-shrink-0 items-center px-4 cursor-pointer"
@@ -437,7 +440,6 @@ export default function AdminLayout() {
 
                 {/* LOGOUT Button */}
                 <LogoutButton />
-
               </div>
             </div>
           </div>
